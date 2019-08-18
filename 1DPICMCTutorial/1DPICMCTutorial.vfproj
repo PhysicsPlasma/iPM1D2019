@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{15D47F16-90DB-4F2C-BC82-312F48E427D2}">
+	<Platforms>
+		<Platform Name="Win32"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd;h;inc"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		<File RelativePath=".\input\controlflow.txt"/>
+		<File RelativePath=".\input\gas.txt"/></Filter>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="base">
+		<File RelativePath=".\code\base\Constants.f90"/>
+		<File RelativePath=".\code\base\ControlFlow.f90"/>
+		<File RelativePath=".\code\base\Field.f90"/>
+		<File RelativePath=".\code\base\Grid.f90"/>
+		<File RelativePath=".\code\base\Numrical.F90"/>
+		<File RelativePath=".\code\base\ParticleBoundary.f90"/>
+		<File RelativePath=".\code\base\ParticleBundle.f90"/>
+		<File RelativePath=".\code\base\ParticleOne.f90"/>
+		<File RelativePath=".\code\base\SpecyOne.f90"/></Filter>
+		<Filter Name="diag">
+		<File RelativePath=".\code\diagnostics\DiagCollisionRate.f90"/>
+		<File RelativePath=".\code\diagnostics\DiagEEPF.f90"/>
+		<File RelativePath=".\code\diagnostics\DiagElectrodeParticles.f90"/>
+		<File RelativePath=".\code\diagnostics\DiagMomentum.f90"/>
+		<File RelativePath=".\code\diagnostics\DiagOneStep.f90"/>
+		<File RelativePath=".\code\diagnostics\DiagTestParticle.f90"/></Filter>
+		<Filter Name="mc">
+		<File RelativePath=".\code\mc\MCCChi.f90"/>
+		<File RelativePath=".\code\mc\MCCElectron.F90"/>
+		<File RelativePath=".\code\mc\MCCInit.F90"/>
+		<File RelativePath=".\code\mc\MCCIon.F90"/>
+		<File RelativePath=".\code\mc\MCCPublic.F90"/>
+		<File RelativePath=".\code\mc\MCCSigma.f90"/>
+		<File RelativePath=".\code\mc\Recombination.F90"/>
+		<File RelativePath=".\code\mc\TypeMCC.f90"/></Filter>
+		<Filter Name="pic">
+		<File RelativePath=".\code\pic\FieldBounday.F90"/>
+		<File RelativePath=".\code\pic\FieldOneStep.f90"/></Filter>
+		<File RelativePath=".\code\Main.F90"/>
+		<File RelativePath=".\code\OneStep.F90"/></Filter></Files>
+	<Globals/></VisualStudioProject>

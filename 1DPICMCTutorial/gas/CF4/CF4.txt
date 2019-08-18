@@ -1,0 +1,13 @@
+ &GasPhysicsfile
+ GP%Name      =           CF4,
+ GP%MCModel   =           2,
+ GP%NAtom     =           5,
+ GP%Ns        =           3,
+ GP%Mass      =           88.0043128,
+ GP%Radius    =           1.548d-10,
+ GP%BetaMax   =           3.d0
+ GP%SP(1)     =           F-,  1,-1,18.9984030,1.35d-10,
+ GP%SP(2)     =           CF3+,4, 1,69.0059096,2.d-10,
+ GP%SP(3)     =           CF3-,4,-1,69.0059096,2.d-10,
+ /
+

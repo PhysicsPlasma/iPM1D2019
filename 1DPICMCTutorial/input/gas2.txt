@@ -1,0 +1,8 @@
+&NGasFile
+NGas         =   2
+!GasName      =   He,Ar
+!PGas         =   100.0
+!TGas         =   300.0
+!TElectron    =   30000.0
+!GasRatio     =   0.5,0.5
+/

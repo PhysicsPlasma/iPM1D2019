@@ -1,0 +1,14 @@
+&NSpecyFile
+Nspecy=1
+/
+
+
+ &GasPhysicsfile
+ GP%Name      =  Ne
+ GP%MCModel   =           1,
+ GP%NAtom     =           1,
+ GP%Ns        =           1,
+ GP%MGas      =           20.1797,
+ GP%Radius    =         154.d-12,
+ GP%OS(1)     =  Ne+,1,1,20.1797,154.d-12
+ /

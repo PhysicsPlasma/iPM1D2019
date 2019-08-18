@@ -1,0 +1,9 @@
+ &GasPhysicsfile
+ GP%Name      =           H,
+ GP%MCModel   =           1,
+ GP%NAtom     =           1,
+ GP%Ns        =           1,
+ GP%Mass      =           1.00794,
+ GP%Radius    =           53.d-12,
+ GP%SP(1)     =           H+,1,1,1.00794,53.d-12,
+ /

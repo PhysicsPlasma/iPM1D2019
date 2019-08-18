@@ -1,0 +1,540 @@
+&MRList
+Model     =     1,
+NReaction  =    7,
+/
+!LXCat, www.lxcat.net
+!Generated on 06 Jun 2017. All rights reserved.
+!
+!RECOMMENDED REFERENCE FORMAT
+!- IST-Lisbon database, www.lxcat.net, retrieved on June 6, 2017.
+!Be aware that some databases and solvers can additionally have instructions how to reference corresponding data.
+!Please check below in the headers of databases.
+!
+!CROSS SECTION DATA FORMAT
+!In downloaded files, each collision process is defined by a block consisting of
+!1st line
+!Keyword in capitals indicating the type of the collision. Possible collision types are elastic, effective, excitation,
+!ionization, or attachment (capital letters required, key words are case sensitive), where "elastic" is used to denote
+!the elastic momentum transfer cross section and where "effective" denotes the total momentum transfer cross section (sum
+!of elastic momentum transfer and total inelastic cross sections).  The latter is useful for solving the Boltzmann
+!equation in the 2-term approximation.
+!2nd line
+!Name of the target particle species. This name is a character string, freely chosen by the user, e.g. "Ar". Optionally
+!for excitation processes, the name of the corresponding excited state can be specified on the same line, separated from
+!the first name either by arrow "->" (dash + greater than) or by double-head arrow "<->" (less than + dash +
+!greater than), e.g. "Ar -> Ar*" and "Ar <-> Ar*", respectively. In the later case BOLSIG+ will automatically
+!define the inverse superelastic process, constructing the superelastic cross-section by detailed balancing, and
+!considering the indicated excited state as the target. In this case, the ratio of statistical weights must be input in
+!the 3rd line (see below).  Alternatively, superelastic collisions could be defined explicitly as excitation collisions
+!with a negative electron energy loss with user input cross sections and species name, "Ar*", for example.
+!3rd line
+!For elastic and effective collisions, the ratio of the electron mass to the target particle mass. For excitation or
+!ionization collisions, the electron energy loss (nominally the threshold energy) in eV. For attachment, the 3rd line is
+!missing. In case of an excitation process where an excited state has been indicated on the 2nd line using double-head
+!arrow "<->", the 3rd line must specify also ratio of the statistical weights of the final state to the initial state
+!as the second parameter in 3rd line this is needed by BOLSIG+ to calculate the de-excitation cross-section.
+!from 4th line (optionally)
+!User comments and reference information, maximum 100 lines. The only constraint on format is that these comment lines
+!must not start with a number.
+!Finally
+!Table of the cross section as a function of energy. The table starts and ends by a line of dashes "------" (at least 5),
+!and has otherwise two numbers per line: the energy in eV and the cross section in m2.
+
+!xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+!DATABASE:         IST-Lisbon database
+!PERMLINK:         www.lxcat.net/IST-Lisbon
+!DESCRIPTION:      IST-Lisbon database contains up-to-date electron-neutral scattering cross sections (together with the
+!                  measured swarm parameters used to validate these data), resulting from the research effort of the
+!                  Group of Gas Discharges and Gaseous Electronics with IPFN/IST (Instituto de Plasmas e Fusão Nuclear /
+!                  Instituto Superior Técnico), Lisbon, Portugal. The data, compiled from the literature, correspond to
+!                  contributions from different authors (see detailed references in the database). For each gas the
+!                  database presents a COMPLETE SET of cross sections, validated against measured swarm parameters by
+!                  solving the two-term homogeneous electron Boltzmann equation. In most cases, predictions are in
+!                  agreement with measurements within 1?0%, for reduced electric fields E/N ~ 1e-4?00 Td. To
+!                  improve predictions at low E/N, some sets need to be completed with rotational cross sections, also
+!                  available in the database.
+!CONTACT:          LL Alves and V Guerra
+!                  e-mail: llalves@@tecnico.ulisboa.pt
+!HOW TO REFERENCE: L. L. Alves, "The IST-Lisbon database on LXCat" J. Phys. Conf. Series 2014, 565, 1
+!xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+!
+!************************************************************************************************************************
+!
+!COMMENT: L. Marques, J. Jolly, and L.L. Alves, quotCapacitively coupled radio-frequency hydrogen discharges: The role of
+!         kineticsquot 2007 J. Appl. Phys. 102 063305 1-14. These data, for the electron excitation of atomic hydrogen,
+!         complement the COMPLETE set of H2 cross sections.
+!
+!*********************************************************** H ***********************************************************
+
+!ELASTIC
+!H
+! 5.486900e-4
+!SPECIES: e / H
+!PROCESS: E + H -> E + H, Elastic
+!PARAM.:  m/M = 0.00054869, complete set
+!COMMENT: Mukherjee M et al 1987 Phys. Rev. A 36 937 Bray I et al 1991 Phys. Rev. A 43 5874.
+!UPDATED: 2012-04-11 16:07:23
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+&SRList
+SR(1)%Reaction            =           0,11,0,0.d0,
+SR(1)%EnergySigma     =
+ 0.000000e+0	4.479000e-19
+ 1.000000e-4	4.510700e-19
+ 1.000000e-3	4.566600e-19
+ 1.000000e-2	4.660000e-19
+ 5.000000e-2	4.601400e-19
+ 1.000000e-1	4.424600e-19
+ 3.000000e-1	3.741300e-19
+ 5.820000e-1	2.972000e-19
+ 1.207000e+0	2.402400e-19
+ 2.171000e+0	1.871700e-19
+ 3.423000e+0	1.421000e-19
+ 4.889000e+0	1.057900e-19
+ 6.691000e+0	7.630900e-20
+ 8.704000e+0	5.580800e-20
+ 1.200000e+1	3.350200e-20
+ 2.000000e+1	1.377900e-20
+ 3.000000e+1	6.840700e-21
+ 5.000000e+1	3.009700e-21
+ 1.000000e+2	6.939000e-22
+ 3.000000e+2	9.140000e-23
+ 4.000000e+2	5.430000e-23
+ 5.000000e+2	3.630000e-23
+ 6.800000e+2	2.100000e-23
+ 1.000000e+3	9.694800e-24
+ 2.000000e+3	2.613700e-24
+ 5.000000e+3	4.620500e-25
+ 7.000000e+3	2.445300e-25
+ 1.000000e+4	1.245700e-25
+!!-----------------------------
+
+!EXCITATION
+!H -> H(1p)
+! 1.021000e+1
+!SPECIES: e / H
+!PROCESS: E + H -> E + H(1p), Excitation
+!PARAM.:  E = 10.21 eV, complete set
+!COMMENT: Drawin H 1967 Report No. EUR-CEA-FC-383.
+!UPDATED: 2012-04-11 16:08:16
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+SR(2)%Reaction            =           0,12,0,10.21d0,
+SR(2)%EnergySigma     =
+ 1.021000e+1	0.000000e+0
+ 1.050000e+1	1.643100e-21
+ 1.100000e+1	2.224700e-21
+ 1.150000e+1	2.727900e-21
+ 1.200000e+1	3.164700e-21
+ 1.300000e+1	3.876800e-21
+ 1.400000e+1	4.421400e-21
+ 1.500000e+1	4.840500e-21
+ 1.600000e+1	5.163900e-21
+ 1.700000e+1	5.413600e-21
+ 1.800000e+1	5.605700e-21
+ 1.900000e+1	5.752300e-21
+ 2.000000e+1	5.862700e-21
+ 2.100000e+1	5.944100e-21
+ 2.200000e+1	6.002100e-21
+ 2.300000e+1	6.041100e-21
+ 2.400000e+1	6.064600e-21
+ 2.500000e+1	6.075400e-21
+ 2.600000e+1	6.075800e-21
+ 2.700000e+1	6.303200e-21
+ 2.800000e+1	6.498600e-21
+ 2.900000e+1	6.666400e-21
+ 3.000000e+1	6.810000e-21
+ 3.500000e+1	7.263200e-21
+ 4.000000e+1	7.436200e-21
+ 4.500000e+1	7.457400e-21
+ 5.000000e+1	7.394000e-21
+ 5.500000e+1	7.282900e-21
+ 6.000000e+1	7.145500e-21
+ 6.500000e+1	6.994600e-21
+ 7.000000e+1	6.837800e-21
+ 7.500000e+1	6.679800e-21
+ 8.000000e+1	6.523500e-21
+ 8.500000e+1	6.370700e-21
+ 9.000000e+1	6.222400e-21
+ 9.500000e+1	6.079200e-21
+ 1.000000e+2	5.941300e-21
+ 1.500000e+2	4.836100e-21
+ 2.000000e+2	4.092800e-21
+ 2.500000e+2	3.563300e-21
+ 3.000000e+2	3.166200e-21
+ 3.500000e+2	2.856500e-21
+ 4.000000e+2	2.607500e-21
+ 4.500000e+2	2.402500e-21
+ 5.000000e+2	2.230500e-21
+ 6.000000e+2	1.957100e-21
+ 7.000000e+2	1.748800e-21
+ 8.000000e+2	1.584300e-21
+ 9.000000e+2	1.450600e-21
+ 1.000000e+3	1.339700e-21
+ 2.000000e+3	7.820500e-22
+ 4.000000e+3	4.471400e-22
+ 6.000000e+3	3.199700e-22
+ 8.000000e+3	2.516200e-22
+ 1.000000e+4	2.085200e-22
+!!-----------------------------
+
+!EXCITATION
+!H -> H(2s)
+! 1.021000e+1
+!SPECIES: e / H
+!PROCESS: E + H -> E + H(2s), Excitation
+!PARAM.:  E = 10.21 eV, complete set
+!COMMENT: Drawin H 1967 Report No. EUR-CEA-FC-383.
+!UPDATED: 2012-04-11 16:08:06
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+  SR(3)%Reaction            =           0,12,0,10.21d0,
+SR(3)%EnergySigma     =
+ 1.021000e+1	0.000000e+0
+ 1.050000e+1	9.900000e-22
+ 1.100000e+1	1.160000e-21
+ 1.150000e+1	1.330000e-21
+ 1.200000e+1	1.500000e-21
+ 1.300000e+1	1.384600e-21
+ 1.400000e+1	1.285700e-21
+ 1.500000e+1	1.200000e-21
+ 1.600000e+1	1.125000e-21
+ 1.700000e+1	1.058800e-21
+ 1.800000e+1	1.000000e-21
+ 1.900000e+1	9.473700e-22
+ 2.000000e+1	9.000000e-22
+ 2.100000e+1	8.571400e-22
+ 2.200000e+1	8.181800e-22
+ 2.300000e+1	7.826100e-22
+ 2.400000e+1	7.500000e-22
+ 2.500000e+1	7.200000e-22
+ 2.600000e+1	7.189900e-22
+ 2.700000e+1	7.166000e-22
+ 2.800000e+1	7.135200e-22
+ 2.900000e+1	7.099000e-22
+ 3.000000e+1	7.058300e-22
+ 3.500000e+1	6.813500e-22
+ 4.000000e+1	6.540600e-22
+ 4.500000e+1	6.267700e-22
+ 5.000000e+1	6.006200e-22
+ 5.500000e+1	5.760700e-22
+ 6.000000e+1	5.532000e-22
+ 6.500000e+1	5.320000e-22
+ 7.000000e+1	5.123500e-22
+ 7.500000e+1	4.941500e-22
+ 8.000000e+1	4.772500e-22
+ 8.500000e+1	4.615400e-22
+ 9.000000e+1	4.469100e-22
+ 9.500000e+1	4.332600e-22
+ 1.000000e+2	4.204900e-22
+ 1.500000e+2	3.271900e-22
+ 2.000000e+2	2.703300e-22
+ 2.500000e+2	2.317400e-22
+ 3.000000e+2	2.036500e-22
+ 3.500000e+2	1.822000e-22
+ 4.000000e+2	1.652100e-22
+ 4.500000e+2	1.513900e-22
+ 5.000000e+2	1.399000e-22
+ 6.000000e+2	1.218600e-22
+ 7.000000e+2	1.082700e-22
+ 8.000000e+2	9.762600e-23
+ 9.000000e+2	8.904800e-23
+ 1.000000e+3	8.197000e-23
+ 2.000000e+3	4.699400e-23
+ 4.000000e+3	2.650100e-23
+ 6.000000e+3	1.883900e-23
+ 8.000000e+3	1.475300e-23
+ 1.000000e+4	1.218900e-23
+!-----------------------------
+
+!EXCITATION
+!H -> H(3)
+! 1.211000e+1
+!SPECIES: e / H
+!PROCESS: E + H -> E + H(3), Excitation
+!PARAM.:  E = 12.11 eV, complete set
+!COMMENT: Drawin H 1967 Report No. EUR-CEA-FC-383.
+!UPDATED: 2012-04-11 16:08:25
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+ SR(4)%Reaction            =           0,12,0,12.11d0,
+SR(4)%EnergySigma     = 
+ 1.211000e+1	0.000000e+0
+ 1.250000e+1	2.643500e-22
+ 1.300000e+1	3.910100e-22
+ 1.400000e+1	6.031600e-22
+ 1.500000e+1	7.715500e-22
+ 1.600000e+1	9.062700e-22
+ 1.700000e+1	1.014700e-21
+ 1.800000e+1	1.102300e-21
+ 1.900000e+1	1.173400e-21
+ 2.000000e+1	1.231000e-21
+ 2.100000e+1	1.277800e-21
+ 2.200000e+1	1.315600e-21
+ 2.300000e+1	1.346000e-21
+ 2.400000e+1	1.370400e-21
+ 2.500000e+1	1.389600e-21
+ 2.600000e+1	1.404600e-21
+ 2.700000e+1	1.416000e-21
+ 2.800000e+1	1.424300e-21
+ 2.900000e+1	1.430100e-21
+ 3.000000e+1	1.433700e-21
+ 3.500000e+1	1.428600e-21
+ 4.000000e+1	1.401400e-21
+ 4.500000e+1	1.364400e-21
+ 5.000000e+1	1.323500e-21
+ 5.500000e+1	1.281800e-21
+ 6.000000e+1	1.240800e-21
+ 6.500000e+1	1.201200e-21
+ 7.000000e+1	1.163400e-21
+ 7.500000e+1	1.127500e-21
+ 8.000000e+1	1.093700e-21
+ 8.500000e+1	1.061700e-21
+ 9.000000e+1	1.031500e-21
+ 9.500000e+1	1.003000e-21
+ 1.000000e+2	9.761300e-22
+ 1.500000e+2	7.733500e-22
+ 2.000000e+2	6.452500e-22
+ 2.500000e+2	5.566800e-22
+ 3.000000e+2	4.914600e-22
+ 3.500000e+2	4.412300e-22
+ 4.000000e+2	4.012200e-22
+ 4.500000e+2	3.685100e-22
+ 5.000000e+2	3.412100e-22
+ 6.000000e+2	2.981300e-22
+ 7.000000e+2	2.655200e-22
+ 8.000000e+2	2.399000e-22
+ 9.000000e+2	2.191800e-22
+ 1.000000e+3	2.020400e-22
+ 2.000000e+3	1.167400e-22
+ 4.000000e+3	6.622900e-23
+ 6.000000e+3	4.721700e-23
+ 8.000000e+3	3.704400e-23
+ 1.000000e+4	3.064700e-23
+!-----------------------------
+
+!EXCITATION
+!H -> H(4)
+! 1.276000e+1
+!SPECIES: e / H
+!PROCESS: E + H -> E + H(4), Excitation
+!PARAM.:  E = 12.76 eV, complete set
+!COMMENT: Drawin H 1967 Report No. EUR-CEA-FC-383.
+!UPDATED: 2012-04-11 16:08:32
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+  SR(5)%Reaction            =           0,12,0,12.76d0,
+SR(5)%EnergySigma     =
+ 1.276000e+1	0.000000e+0
+ 1.300000e+1	8.060400e-23
+ 1.350000e+1	1.329700e-22
+ 1.400000e+1	1.796600e-22
+ 1.500000e+1	2.587600e-22
+ 1.600000e+1	3.224600e-22
+ 1.700000e+1	3.741100e-22
+ 1.800000e+1	4.162000e-22
+ 1.900000e+1	4.506400e-22
+ 2.000000e+1	4.789000e-22
+ 2.100000e+1	5.021000e-22
+ 2.200000e+1	5.211400e-22
+ 2.300000e+1	5.367600e-22
+ 2.400000e+1	5.495100e-22
+ 2.500000e+1	5.598600e-22
+ 2.600000e+1	5.682000e-22
+ 2.700000e+1	5.748300e-22
+ 2.800000e+1	5.800200e-22
+ 2.900000e+1	5.839800e-22
+ 3.000000e+1	5.868900e-22
+ 3.500000e+1	5.902600e-22
+ 4.000000e+1	5.825800e-22
+ 4.500000e+1	5.696800e-22
+ 5.000000e+1	5.544300e-22
+ 5.500000e+1	5.383400e-22
+ 6.000000e+1	5.222000e-22
+ 6.500000e+1	5.064100e-22
+ 7.000000e+1	4.912000e-22
+ 7.500000e+1	4.766700e-22
+ 8.000000e+1	4.628500e-22
+ 8.500000e+1	4.497500e-22
+ 9.000000e+1	4.373400e-22
+ 9.500000e+1	4.255900e-22
+ 1.000000e+2	4.144700e-22
+ 1.500000e+2	3.298400e-22
+ 2.000000e+2	2.758600e-22
+ 2.500000e+2	2.383600e-22
+ 3.000000e+2	2.106700e-22
+ 3.500000e+2	1.892900e-22
+ 4.000000e+2	1.722400e-22
+ 4.500000e+2	1.582900e-22
+ 5.000000e+2	1.466300e-22
+ 6.000000e+2	1.282100e-22
+ 7.000000e+2	1.142500e-22
+ 8.000000e+2	1.032800e-22
+ 9.000000e+2	9.439400e-23
+ 1.000000e+3	8.704100e-23
+ 2.000000e+3	5.038300e-23
+ 4.000000e+3	2.862300e-23
+ 6.000000e+3	2.042000e-23
+ 8.000000e+3	1.602700e-23
+ 1.000000e+4	1.326400e-23
+!-----------------------------
+
+!EXCITATION
+!H -> H(5)
+! 1.311000e+1
+!SPECIES: e / H
+!PROCESS: E + H -> E + H(5), Excitation
+!PARAM.:  E = 13.11 eV, complete set
+!COMMENT: Drawin H 1967 Report No. EUR-CEA-FC-383.
+!UPDATED: 2012-04-11 16:08:40
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+  SR(6)%Reaction            =           0,12,0,13.11d0,
+SR(6)%EnergySigma     =
+ 1.311000e+1	0.000000e+0
+ 1.350000e+1	2.541200e-23
+ 1.400000e+1	5.083900e-23
+ 1.500000e+1	9.407700e-23
+ 1.600000e+1	1.290900e-22
+ 1.700000e+1	1.576500e-22
+ 1.800000e+1	1.810800e-22
+ 1.900000e+1	2.004000e-22
+ 2.000000e+1	2.163800e-22
+ 2.100000e+1	2.296300e-22
+ 2.200000e+1	2.406200e-22
+ 2.300000e+1	2.497500e-22
+ 2.400000e+1	2.573300e-22
+ 2.500000e+1	2.635900e-22
+ 2.600000e+1	2.687400e-22
+ 2.700000e+1	2.729600e-22
+ 2.800000e+1	2.763800e-22
+ 2.900000e+1	2.791100e-22
+ 3.000000e+1	2.812600e-22
+ 3.500000e+1	2.857300e-22
+ 4.000000e+1	2.838600e-22
+ 4.500000e+1	2.788500e-22
+ 5.000000e+1	2.723300e-22
+ 5.500000e+1	2.651400e-22
+ 6.000000e+1	2.577400e-22
+ 6.500000e+1	2.504000e-22
+ 7.000000e+1	2.432500e-22
+ 7.500000e+1	2.363600e-22
+ 8.000000e+1	2.297600e-22
+ 8.500000e+1	2.234800e-22
+ 9.000000e+1	2.175000e-22
+ 9.500000e+1	2.118200e-22
+ 1.000000e+2	2.064300e-22
+ 1.500000e+2	1.650200e-22
+ 2.000000e+2	1.383500e-22
+ 2.500000e+2	1.197300e-22
+ 3.000000e+2	1.059300e-22
+ 3.500000e+2	9.526600e-23
+ 4.000000e+2	8.674200e-23
+ 4.500000e+2	7.975700e-23
+ 5.000000e+2	7.391800e-23
+ 6.000000e+2	6.467800e-23
+ 7.000000e+2	5.767100e-23
+ 8.000000e+2	5.215400e-23
+ 9.000000e+2	4.768600e-23
+ 1.000000e+3	4.398600e-23
+ 2.000000e+3	2.550600e-23
+ 4.000000e+3	1.451000e-23
+ 6.000000e+3	1.035800e-23
+ 8.000000e+3	8.133200e-24
+ 1.000000e+4	6.732800e-24
+!-----------------------------
+
+!IONIZATION
+!H -> H+
+! 1.361000e+1
+!SPECIES: e / H
+!PROCESS: E + H -> E + E + H+, Ionization
+!PARAM.:  E = 13.61 eV, complete set
+!COMMENT: Drawin H 1967 Report No. EUR-CEA-FC-383.
+!UPDATED: 2012-04-11 16:08:47
+!COLUMNS: Energy (eV) | Cross section (m2)
+!!-----------------------------
+ SR(7)%Reaction            =           0,13,1,13.61d0,
+SR(7)%EnergySigma     =
+ 1.361000e+1	0.000000e+0
+ 1.400000e+1	1.335700e-21
+ 1.450000e+1	1.643500e-21
+ 1.500000e+1	1.923200e-21
+ 1.600000e+1	2.388200e-21
+ 1.700000e+1	2.731300e-21
+ 1.800000e+1	2.969200e-21
+ 1.900000e+1	3.122100e-21
+ 2.000000e+1	3.208700e-21
+ 2.100000e+1	3.244900e-21
+ 2.200000e+1	3.243200e-21
+ 2.300000e+1	3.213700e-21
+ 2.400000e+1	3.164100e-21
+ 2.500000e+1	3.100300e-21
+ 2.600000e+1	3.026700e-21
+ 2.700000e+1	2.946900e-21
+ 2.800000e+1	2.863200e-21
+ 2.900000e+1	2.777700e-21
+ 3.000000e+1	2.691700e-21
+ 3.100000e+1	2.606200e-21
+ 3.200000e+1	2.522200e-21
+ 3.300000e+1	2.440000e-21
+ 3.400000e+1	2.360000e-21
+ 3.500000e+1	2.282500e-21
+ 3.600000e+1	2.207700e-21
+ 3.700000e+1	2.135600e-21
+ 3.800000e+1	2.066200e-21
+ 3.900000e+1	1.999600e-21
+ 4.000000e+1	1.935600e-21
+ 4.100000e+1	1.851900e-21
+ 4.200000e+1	1.832400e-21
+ 4.300000e+1	1.810800e-21
+ 4.400000e+1	1.787400e-21
+ 4.500000e+1	1.762800e-21
+ 4.600000e+1	1.737200e-21
+ 4.700000e+1	1.710800e-21
+ 4.800000e+1	1.683900e-21
+ 4.900000e+1	1.656800e-21
+ 5.000000e+1	1.629400e-21
+ 5.100000e+1	1.602100e-21
+ 5.200000e+1	1.574800e-21
+ 5.300000e+1	1.547600e-21
+ 5.400000e+1	1.520700e-21
+ 5.500000e+1	1.494100e-21
+ 5.600000e+1	1.467900e-21
+ 5.700000e+1	1.442000e-21
+ 5.800000e+1	1.416600e-21
+ 5.900000e+1	1.391500e-21
+ 6.000000e+1	1.367000e-21
+ 6.100000e+1	1.342900e-21
+ 6.200000e+1	1.319300e-21
+ 6.300000e+1	1.296100e-21
+ 6.400000e+1	1.273500e-21
+ 6.500000e+1	1.251300e-21
+ 7.000000e+1	1.147700e-21
+ 7.500000e+1	1.055500e-21
+ 8.000000e+1	9.736400e-22
+ 8.500000e+1	9.008300e-22
+ 9.000000e+1	8.359700e-22
+ 9.500000e+1	7.780500e-22
+ 1.000000e+2	7.261600e-22
+ 1.500000e+2	4.115200e-22
+ 2.000000e+2	2.592300e-22
+ 2.500000e+2	1.812800e-22
+ 3.000000e+2	1.353800e-22
+ 3.500000e+2	1.057600e-22
+ 4.000000e+2	8.539200e-23
+ 4.500000e+2	7.069400e-23
+ 5.000000e+2	5.969400e-23
+ 6.000000e+2	2.352300e-21
+ 7.000000e+2	2.084700e-21
+ 8.000000e+2	1.876700e-21
+ 9.000000e+2	1.709800e-21
+ 1.000000e+3	1.572700e-21
+ 2.000000e+3	9.001900e-22
+ 4.000000e+3	5.086200e-22
+ 6.000000e+3	3.621900e-22
+ 8.000000e+3	2.839900e-22
+ 1.000000e+4	2.348700e-22
+!!-----------------------------
+!xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ /

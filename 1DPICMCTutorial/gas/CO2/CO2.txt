@@ -1,0 +1,11 @@
+ &GasPhysicsfile
+ GP%Name      =           CO2,
+ GP%MCModel   =           1,
+ GP%NAtom     =           3,
+ GP%Ns        =           1,
+ GP%Mass      =           44.01,
+ GP%Radius    =           116.3d-12,
+ GP%BetaMax   =           3.d0
+ GP%SP(1)     =           CO2+,3, 1,44.01,116.3d-12,
+ /
+

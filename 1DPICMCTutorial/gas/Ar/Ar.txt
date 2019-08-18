@@ -1,0 +1,9 @@
+ &GasPhysicsfile
+ GP%Name      =           Ar,
+ GP%MCModel   =           1,
+ GP%NAtom     =           1,
+ GP%Ns        =           1,
+ GP%Mass      =           39.948,
+ GP%Radius    =           188.d-12,
+ GP%SP(1)     =           Ar+,1,1,39.948,188.d-12,
+ /
