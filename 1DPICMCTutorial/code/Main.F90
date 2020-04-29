@@ -35,28 +35,55 @@
    !do 
    !Call OneStepRestart()
    !Write(*,*) 'Period ',j,ParticleGlobal%NPar
-   !ENd Do
-   Call CPU_TIME(CPU1)
-   Call ParticleGlobal(0)%Dump(0)
-   Call CPU_TIME(CPU2)
-   Write(*,*) 'Period ',CPU2-CPU1,'DumpTime1!!!',ParticleGlobal(0)%NPar
    
-   
-   
+
+   !
+   !
+   !
    Call CPU_TIME(CPU1)
    Call ParticleGlobal(0)%Load(Status)
    Call CPU_TIME(CPU2)
    Write(*,*) 'Period ',CPU2-CPU1,'LoadTime1!!!',ParticleGlobal(0)%NPar
    
-      Call CPU_TIME(CPU1)
+   Call CPU_TIME(CPU1)
    Call ParticleGlobal(0)%Dump(0)
    Call CPU_TIME(CPU2)
-   Write(*,*) 'Period ',CPU2-CPU1,'DumpTime2!!!',ParticleGlobal(0)%NPar
+   Write(*,*) 'Period ',CPU2-CPU1,'DumpTime1!!!',ParticleGlobal(0)%NPar
+   
 
+   
    Call CPU_TIME(CPU1)
    Call ParticleGlobal(0)%Load(Status)
    Call CPU_TIME(CPU2)
    Write(*,*) 'Period ',CPU2-CPU1,'LoadTime2!!!',ParticleGlobal(0)%NPar
+   
+   Call CPU_TIME(CPU1)
+   Call ParticleGlobal(0)%Dump(0)
+   Call CPU_TIME(CPU2)
+   Write(*,*) 'Period ',CPU2-CPU1,'DumpTime2!!!',ParticleGlobal(0)%NPar
+   
+   !ENd Do
+   !Call CPU_TIME(CPU1)
+   !Call ParticleGlobal(0)%Dump(0)
+   !Call CPU_TIME(CPU2)
+   !Write(*,*) 'Period ',CPU2-CPU1,'DumpTime1!!!',ParticleGlobal(0)%NPar
+   !
+   !
+   !
+   !Call CPU_TIME(CPU1)
+   !Call ParticleGlobal(0)%Load(Status)
+   !Call CPU_TIME(CPU2)
+   !Write(*,*) 'Period ',CPU2-CPU1,'LoadTime1!!!',ParticleGlobal(0)%NPar
+   !
+   !   Call CPU_TIME(CPU1)
+   !Call ParticleGlobal(0)%Dump(0)
+   !Call CPU_TIME(CPU2)
+   !Write(*,*) 'Period ',CPU2-CPU1,'DumpTime2!!!',ParticleGlobal(0)%NPar
+   !
+   !Call CPU_TIME(CPU1)
+   !Call ParticleGlobal(0)%Load(Status)
+   !Call CPU_TIME(CPU2)
+   !Write(*,*) 'Period ',CPU2-CPU1,'LoadTime2!!!',ParticleGlobal(0)%NPar
    
    
    
