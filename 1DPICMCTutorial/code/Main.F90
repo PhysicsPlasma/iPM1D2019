@@ -45,6 +45,8 @@
    Call CPU_TIME(CPU2)
    Write(*,*) 'Period ',CPU2-CPU1,'LoadTime1!!!',ParticleGlobal(0)%NPar
    
+   If(Status) Write(*,*) "Load ERORRRR!!!!!!"
+   
    Call CPU_TIME(CPU1)
    Call ParticleGlobal(0)%Dump(0)
    Call CPU_TIME(CPU2)
