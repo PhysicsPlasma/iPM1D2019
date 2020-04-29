@@ -6,7 +6,8 @@
    Use ModuleDiagOneStep
    Implicit none
    Integer(4) :: i,j,k
-   real(8) Cpu1,Cpu2 
+   real(8) Cpu1,Cpu2
+   Logical ::  Status
    
       Integer(4) :: NRun=1,NDiagShort=1,NDiagLong=0
    !Integer(4) :: NRun=10,NDiagShort=0,NDiagLong=0
@@ -14,38 +15,61 @@
       
    Call AllInitilalization()
    
-   !Call CPU_TIME(CPU1)
-   DO j=1,NRun
-   do i=1,ControlFlowGlobal%Period
-        Call OneStep()
-         If (ParticleGlobal(0)%Npar>ParticleGlobal(0)%NParNormal) then
-                     do k=0,1                
-                             Write(*,*) ParticleGlobal(k)%Npar,k,"before"
-                             Call ParticleBundleNormalization(ParticleGlobal(k),ParticleGlobal(k)%Npar/2)
-                             Write(*,*) ParticleGlobal(k)%Npar,k,"after" 
-                     end do
-                 End If     
-   ENd DO
+
+   !DO j=1,NRun
+   !do i=1,ControlFlowGlobal%Period
+   !     Call OneStep()
+   !      If (ParticleGlobal(0)%Npar>ParticleGlobal(0)%NParNormal) then
+   !                  do k=0,1                
+   !                          Write(*,*) ParticleGlobal(k)%Npar,k,"before"
+   !                          Call ParticleBundleNormalization(ParticleGlobal(k),ParticleGlobal(k)%Npar/2)
+   !                          Write(*,*) ParticleGlobal(k)%Npar,k,"after" 
+   !                  end do
+   !              End If     
+   !ENd DO
    
-   open (10,position='append',file='ParticleNumber.dat')
-   write (10,*) ParticleGlobal%NPar,ParticleGlobal%weight
-   close (10)
+   !open (10,position='append',file='ParticleNumber.dat')
+   !write (10,*) ParticleGlobal%NPar,ParticleGlobal%weight
+   !close (10)
    
-   Call OneStepRestart()
-   Write(*,*) 'Period ',j,ParticleGlobal%NPar
-   ENd Do
-   !Call CPU_TIME(CPU2)
-   !Write(*,*) 'Period ',CPU2-CPU1,ParticleGlobal%NPar
+   !do 
+   !Call OneStepRestart()
+   !Write(*,*) 'Period ',j,ParticleGlobal%NPar
+   !ENd Do
+   Call CPU_TIME(CPU1)
+   Call ParticleGlobal(0)%Dump(0)
+   Call CPU_TIME(CPU2)
+   Write(*,*) 'Period ',CPU2-CPU1,'DumpTime1!!!',ParticleGlobal(0)%NPar
+   
+   
+   
+   Call CPU_TIME(CPU1)
+   Call ParticleGlobal(0)%Load(Status)
+   Call CPU_TIME(CPU2)
+   Write(*,*) 'Period ',CPU2-CPU1,'LoadTime1!!!',ParticleGlobal(0)%NPar
+   
+      Call CPU_TIME(CPU1)
+   Call ParticleGlobal(0)%Dump(0)
+   Call CPU_TIME(CPU2)
+   Write(*,*) 'Period ',CPU2-CPU1,'DumpTime2!!!',ParticleGlobal(0)%NPar
+
+   Call CPU_TIME(CPU1)
+   Call ParticleGlobal(0)%Load(Status)
+   Call CPU_TIME(CPU2)
+   Write(*,*) 'Period ',CPU2-CPU1,'LoadTime2!!!',ParticleGlobal(0)%NPar
+   
+   
+   
    !Write(*,*) 'Period ', j,' Complete!'  
-   Call DiagInitilalization(ControlFlowGlobal)
-     do j=1,NDiagShort
-         do i=1,ControlFlowGlobal%Period
-             Call OneStep()
-             Call DiagOneStep()
-         End do
-     ENd Do
-     Call DiagOneStepFinal()
-   !
+   !Call DiagInitilalization(ControlFlowGlobal)
+   !  do j=1,NDiagShort
+   !      do i=1,ControlFlowGlobal%Period
+   !          Call OneStep()
+   !          Call DiagOneStep()
+   !      End do
+   !  ENd Do
+   !  Call DiagOneStepFinal()
+   !!
 
 pause
 stop
