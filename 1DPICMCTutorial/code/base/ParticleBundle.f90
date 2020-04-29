@@ -235,6 +235,7 @@ Module ModuleParticleBundle
                 a3(i,6)=TempPB%PO(i)%Ay
                 a3(i,7)=TempPB%PO(i)%Az
               End do
+              !ceshi
               call h5f%initialize(Filename, status='new',action='w')
               call h5f%write('/x',a1)
               call h5f%write('/y',a2)
