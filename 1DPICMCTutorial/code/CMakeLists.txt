@@ -1,4 +1,8 @@
-file(GLOB_RECURSE SRCS base/* mc/* pic/* *.F90)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake-modules")
+find_package(PETSc REQUIRED)
+include_directories(${PETSC_INCLUDES})
+
+file(GLOB_RECURSE SRCS base/* mc/* pic/* diagnostics/* solver/*.c *.F90)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 include(FetchContent)
@@ -13,5 +17,6 @@ FetchContent_MakeAvailable(h5fortran_proj)
 # ------------------------------------------------------
 # whatever your program is
 target_link_libraries(${PROJECT_NAME} h5fortran::h5fortran)
+target_link_libraries(${PROJECT_NAME} ${PETSC_LIBRARIES})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/1DPICMCTutorial)

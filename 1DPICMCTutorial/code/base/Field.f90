@@ -1,5 +1,6 @@
 Module ModuleField
      Use ModuleControlFlow
+     use iso_c_binding
      Implicit none
                   Type Field !(Nx)
                         Integer(4) :: Nx=NxMax
@@ -14,11 +15,11 @@ Module ModuleField
                    EndType Field
                    
                     Type FieldSolver
-                        Integer(4) :: Ns=NxMax-2
+                        Integer(c_int) :: Ns=NxMax-2
                         Real(8) :: Dx=Inputdx,Dt=Inputdt
-                        Real(8) :: Source(1:NxMax-2)
-                        Real(8) :: Solve(1:NxMax-2)
-                        Real(8) :: CoeA(1:NxMax-2),CoeB(1:NxMax-2),CoeC(1:NxMax-2)
+                        Real(c_double) :: Source(1:NxMax-2)
+                        Real(c_double) :: Solve(1:NxMax-2)
+                        Real(c_double) :: CoeA(1:NxMax-2),CoeB(1:NxMax-2),CoeC(1:NxMax-2)
                         contains
                              procedure :: Dump=>DumpFieldSolver
                     EndType FieldSolver

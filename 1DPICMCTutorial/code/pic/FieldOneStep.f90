@@ -19,9 +19,11 @@ Module ModuleOneStepField
          End subroutine InitializationField
          
     
-         subroutine FieldOneStep(Ns,FO,FG,FB,FS)
+         subroutine FieldOneStep(Ns,FO,FG,FB,FS,ierr)
             Implicit none
+            Integer(C_int),intent(inout) :: ierr
             Integer(4),intent(in) :: Ns
+            
             Type(FieldOne),intent(in) :: FO(0:Ns)
             Type(Field),intent(inout) :: FG
             Type(FieldSolver), intent(inout):: FS
@@ -29,7 +31,7 @@ Module ModuleOneStepField
             Call AccumulationField(FG,Ns,FO)
             Call FB%Updater
             Call UpdaterCoeFieldSolver(FS,FG,FB)
-            Call UpdaterFieldSolver(FS)
+            Call UpdaterFieldSolver(FS,ierr)
             Call UpdaterField(FG,FS,FB)
             return
         End subroutine FieldOneStep
@@ -50,10 +52,12 @@ Module ModuleOneStepField
             return
     End subroutine AccumulationField
     
-          subroutine UpdaterFieldSolver(FS)
+          subroutine UpdaterFieldSolver(FS,ierr)
             Implicit none
            Class(FieldSolver), intent(inout):: FS
-           Call Tridag(FS%CoeA,FS%CoeB,FS%CoeC,FS%Source,FS%Solve,Fs%Ns)
+           integer(C_int),intent(inout) :: ierr
+        !    Call Tridag(FS%CoeA,FS%CoeB,FS%CoeC,FS%Source,FS%Solve,Fs%Ns)
+           Call petscsolver(FS%CoeA,FS%CoeB,FS%CoeC,FS%Source,FS%Solve,Fs%Ns,ierr)
            return
         End subroutine UpdaterFieldSolver
 

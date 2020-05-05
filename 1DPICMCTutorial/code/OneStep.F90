@@ -32,13 +32,14 @@ Module ModuleOneStep
             Return  
     End Subroutine AllInitilalization
 
-    Subroutine OneStep()
+    Subroutine OneStep(ierr)
              !  Use ,only : R
                Implicit none
                !Integer(4) :: Ntemp                   !Ntemp=ParticleGlobal(0)%NPar
             !   Real(8)::GamaE=0.2d0,GamaI=0.2d0
                                     !Write(*,*) ParticleBDOneGlobal%CountMinOne,ParticleBDOneGlobal%CountMin,ParticleGlobal%NPar
                Integer(4) :: i,j
+               integer(c_int),intent(inout) :: ierr
                do i=0,ControlFlowGlobal%Ns
                      Call ParticleGlobal(i)%MoveEM(FieldGlobal)
                      !Call ParticleGlobal(i)%MoveES(FieldGlobal)
@@ -48,7 +49,7 @@ Module ModuleOneStep
                      !Call WeightingOne(ParticleGlobal(i),FieldOneGlobal(i))
                      Call ParticleGlobal(i)%WeightP2C(FieldOneGlobal(i))
                end do
-               Call FieldOneStep(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal)
+               Call FieldOneStep(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal,ierr)
                !Write(*,*) "Period Before",ParticleGlobal%NPar
                Call MCC(ControlFlowGlobal%Ns,ControlFlowGlobal%Ng,ParticleGlobal,SpecyGlobal,GasGlobal,MCCBundleGlobal) 
                

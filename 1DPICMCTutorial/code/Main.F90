@@ -2,23 +2,25 @@
 ! Note Due to the crosssections are different from the ones used in our code, there are some differences in the results.    
     
     Program PIC_MCC_for_CCP
+#include <petsc/finclude/petscksp.h>
+   use petscksp
    Use ModuleOneStep
    Use ModuleDiagOneStep
    Implicit none
    Integer(4) :: i,j,k
    real(8) Cpu1,Cpu2
    Logical ::  Status
-   
+   integer(c_int) :: ierr
       Integer(4) :: NRun=1,NDiagShort=1,NDiagLong=0
    !Integer(4) :: NRun=10,NDiagShort=0,NDiagLong=0
    !Integer(4) :: NRun=10000,NDiagShort=200,NDiagLong=200
-      
+   call PetscInitialize(PETSC_NULL_CHARACTER,ierr)
    Call AllInitilalization()
    
 
-   !DO j=1,NRun
-   !do i=1,ControlFlowGlobal%Period
-   !     Call OneStep()
+   ! DO j=1,NRun
+   ! do i=1,ControlFlowGlobal%Period
+   !     Call OneStep(ierr)
    !      If (ParticleGlobal(0)%Npar>ParticleGlobal(0)%NParNormal) then
    !                  do k=0,1                
    !                          Write(*,*) ParticleGlobal(k)%Npar,k,"before"
@@ -26,8 +28,8 @@
    !                          Write(*,*) ParticleGlobal(k)%Npar,k,"after" 
    !                  end do
    !              End If     
-   !ENd DO
-   
+   ! ENd DO
+   ! end do
    !open (10,position='append',file='ParticleNumber.dat')
    !write (10,*) ParticleGlobal%NPar,ParticleGlobal%weight
    !close (10)
@@ -99,7 +101,7 @@
    !  ENd Do
    !  Call DiagOneStepFinal()
    !!
-
+   call PetscFinalize(ierr)
 pause
 stop
 end  Program
