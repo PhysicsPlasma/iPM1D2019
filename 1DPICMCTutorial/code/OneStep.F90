@@ -4,6 +4,7 @@ Module ModuleOneStep
       Use ModuleMCCPublic
       Use ModuleOneStepField
       Use ModuleMCCInitialization
+      Use ModuleControlFlow
       
       !Use MoveModule
 !      Use Diagnostics
@@ -13,6 +14,15 @@ Module ModuleOneStep
       
                   Type(ParticleBundle),save,Allocatable ::  ParticleGlobal(:)
                   Type(ParticleBoundaryOne),save,Allocatable  :: ParticleBDOneGlobal(:)
+              !    Type(ParticleBoundary),save  :: ParticleBDGlobal
+                  
+                  !Type(ParticleBundle),save,Allocatable ::  ParticleGlobal(:)
+                  
+                  !Type(ParticleBundle),save ::  ParticleGlobalCO[*]
+                  !,ALLOCATABLE
+                  Type(ParticleBundle),CODIMENSION[:],ALLOCATABLE,save ::  ParticleGlobalCO(:)
+                  !Type(ParticleBoundaryOne),CODIMENSION[:],ALLOCATABLE,save ::  ParticleBDOneGlobal(:)
+                  !Type(ParticleBoundaryOne),save,Allocatable  :: ParticleBDOneGlobal(:)[*]
                   !Type(ParticleBoundary),save  :: ParticleBDGlobal
                 
     contains
@@ -31,6 +41,25 @@ Module ModuleOneStep
              Call MCCBundleInit(ControlFlowGlobal,SpecyGlobal,GasGlobal)
             Return  
     End Subroutine AllInitilalization
+    
+    Subroutine AllInitilalizationCO()
+             Implicit none
+             Integer(4) :: i
+             Call InitializationControlFlow(ControlFlowGlobal)
+             Call GasInit(ControlFlowGlobal)
+             Call InitializationField(ControlFlowGlobal)
+             Allocate(ParticleGlobalCO(0:ControlFlowGlobal%Ns)[*])
+             !pause
+             !Allocate(ParticleBDOneGlobal(0:ControlFlowGlobal%Ns))
+             DO i=0,ControlFlowGlobal%Ns
+                    Call ParticleGlobalCO(i)%AllInit(SpecyGlobal(i),ControlFlowGlobal)
+                    !Call ParticleBDOneGlobal(i)%AllInit(ParticleGlobal(i),ControlFlowGlobal)
+             End do
+             Write(*,*) this_image(),"myid2"
+             !pause!
+             !Call MCCBundleInit(ControlFlowGlobal,SpecyGlobal,GasGlobal)
+            Return  
+    End Subroutine AllInitilalizationCO
 
     Subroutine OneStep()
              !  Use ,only : R

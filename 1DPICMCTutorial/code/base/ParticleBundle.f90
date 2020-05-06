@@ -1,9 +1,9 @@
 Module ModuleParticleBundle
     Use ModuleParticleOne
     Use ModuleSpecyOne
-    use h5fortran, only: hdf5_file
+    !use h5fortran, only: hdf5_file
    Implicit none
-   type(hdf5_file) :: h5f
+   !type(hdf5_file) :: h5f
    Type :: ParticleBundle
          Integer(4) :: NPar=0,NParNormal=1000
          Real(8) :: XFactor,VFactor
@@ -22,8 +22,8 @@ Module ModuleParticleBundle
          Procedure :: MoveES=>MoveElectrostaticParticleBundle
          Procedure :: MoveEM=>MoveElectromagneticParticleBundle
          Procedure :: WeightP2C=>WeightP2CParticleBundle
-         Procedure :: Dump=>DumpParticleBundle
-         Procedure :: Load=>LoadParticleBundle
+         Procedure :: Dump=>DumpParticleBundleOld
+         Procedure :: Load=>LoadParticleBundleOld
          Procedure :: Norm=>ParticleBundleNormalization
          !Procedure :: RescaleFieldOne=>RescaleFieldOneParticleBundle
          End Type ParticleBundle
@@ -75,7 +75,9 @@ Module ModuleParticleBundle
                               Call PB%PO(i)%AccInpInit()
                               End Do
                       Else
-                          Call LoadParticleBundle(PB,Status)
+                          !Call LoadParticleBundleOld(PB,Status)
+                          !Call LoadParticleBundleOld(PB,Status)
+                          Call PB%Load(Status)
                           If (Status) Then
                               Do i=1,PB%NPAR
                                   PB%LXScaled=.True.
@@ -195,104 +197,171 @@ Module ModuleParticleBundle
               Return
           End subroutine WeightP2CParticleBundle
           
-          subroutine DumpParticleBundle(PB,Mode)
-              implicit none
-              Class(ParticleBundle),intent(inout) :: PB
-              Type(ParticleBundle) :: TempPB
-              Integer(4),intent(in)  :: Mode
-              Character(len=99) :: Filename
-              Integer(4) :: i,NameIndex
-              Real(8) :: XFactor,YFactor
-              Integer(4) :: a1(2)
-              real(8) :: a2(3)
-              real(8),allocatable :: a3(:,:)
-              Integer(4),save :: NameTimer=1
-              If (Mode==0) Then
-                         NameIndex=DefaultNameIndex
-              else
-                         NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
-                         NameTimer=NameTimer+1
-              End If 
-              TempPB=PB
-              Call TempPB%PosRes
-              Call TempPB%VelRes
-              Write(Filename,*) NameIndex,trim(TempPB%SO%Name),".h5"
-              !Write(Filename,*)trim(adjustl(TempPB%SO%Name)),".h5"
-              Filename=adjustl(Filename)
-              Write(*,*) 'Saving ', trim(TempPB%SO%Name), TempPB%NPar,' Please Wait...' 
-              allocate(a3(TempPB%NPar,7))
-              a1(1)=TempPB%NPar
-              a1(2)=TempPB%NParNormal
-              a2(1)=TempPB%Charge
-              a2(2)=TempPB%Mass
-              a2(3)=TempPB%Weight
-              do i=1,a1(1)
-                a3(i,1)=TempPB%PO(i)%X
-                a3(i,2)=TempPB%PO(i)%Vx
-                a3(i,3)=TempPB%PO(i)%Vy
-                a3(i,4)=TempPB%PO(i)%Vz
-                a3(i,5)=TempPB%PO(i)%Ax
-                a3(i,6)=TempPB%PO(i)%Ay
-                a3(i,7)=TempPB%PO(i)%Az
-              End do
-              !ceshi ceshi
-              call h5f%initialize(Filename, status='new',action='w')
-              call h5f%write('/x',a1)
-              call h5f%write('/y',a2)
-              call h5f%write('/z',a3)
-              call h5f%finalize()
-              Write(*,*) 'Saving ', trim(TempPB%SO%Name),' Complete!'  
-              return
-          end subroutine  DumpParticleBundle
- 
-          subroutine LoadParticleBundle(PB,Status)
-              implicit none
-              Class(ParticleBundle),intent(inout) :: PB
-              Logical,intent(inout) ::  Status
-              Logical :: alive
-              Character(len=99) :: Filename
-              Integer(4) :: i,NameIndex,NPArMax
-              Integer(4) :: b1(2)
-              real(8) :: b2(3)
-              real(8),allocatable :: b3(:,:)
-              NameIndex=DefaultNameIndex
-              Write(Filename,*) NameIndex,trim(PB%SO%Name),".h5"
-              !Write(Filename,*)trim(adjustl(PB%SO%Name)),".h5"
-              Filename=adjustl(Filename)
-              inquire(file=Filename,exist=alive)
-              If(alive) then
-                     call h5f%initialize(Filename, status='old',action='r')
-                     call h5f%read('/x',b1)
-                     call h5f%read('/y',b2)
-                     PB%NPar=b1(1)
-                     PB%NParNormal=b1(2)
-                     PB%Charge=b2(1)
-                     PB%Mass=b2(2)
-                     PB%Weight=b2(3)
-                     allocate(b3(PB%NPar,7))
-                     call h5f%read('/z',b3)
-                     call h5f%finalize()
-                     Write(*,*) 'Loading ', trim(PB%SO%Name), PB%NPar,' Please Wait...' 
-                      NPArMax=Ceiling(2.5*PB%NParNormal)
-                      !If(Allocated(PB%PO)) Deallocate(PB%PO)
-                     ! Allocate(PB%PO(NPArMax))
-                      do i=1,PB%NPar
-                        PB%PO(i)%X=b3(i,1)
-                        PB%PO(i)%Vx=b3(i,2)
-                        PB%PO(i)%Vy=b3(i,3)
-                        PB%PO(i)%Vz=b3(i,4)
-                        PB%PO(i)%Ax=b3(i,5)
-                        PB%PO(i)%Ay=b3(i,6)
-                        PB%PO(i)%Az=b3(i,7)
-                     End do
-                     Status=.False.
-                     Write(*,*) 'Loading ', trim(PB%SO%Name),' Complete!'   
-               else
-                     Write(*,*) 'Can not find the file for ', trim(PB%SO%Name),' the particle will be randomly initilalized.'    
-                     Status=.True. 
-               End if        
-              return
-          end subroutine  LoadParticleBundle
+          !subroutine DumpParticleBundle(PB,Mode)
+          !    implicit none
+          !    Class(ParticleBundle),intent(inout) :: PB
+          !    Type(ParticleBundle) :: TempPB
+          !    Integer(4),intent(in)  :: Mode
+          !    Character(len=99) :: Filename
+          !    Integer(4) :: i,NameIndex
+          !    Real(8) :: XFactor,YFactor
+          !    Integer(4) :: a1(2)
+          !    real(8) :: a2(3)
+          !    real(8),allocatable :: a3(:,:)
+          !    Integer(4),save :: NameTimer=1
+          !    If (Mode==0) Then
+          !               NameIndex=DefaultNameIndex
+          !    else
+          !               NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
+          !               NameTimer=NameTimer+1
+          !    End If 
+          !    TempPB=PB
+          !    Call TempPB%PosRes
+          !    Call TempPB%VelRes
+          !    Write(Filename,*) NameIndex,trim(TempPB%SO%Name),".h5"
+          !    !Write(Filename,*)trim(adjustl(TempPB%SO%Name)),".h5"
+          !    Filename=adjustl(Filename)
+          !    Write(*,*) 'Saving ', trim(TempPB%SO%Name), TempPB%NPar,' Please Wait...' 
+          !    allocate(a3(TempPB%NPar,7))
+          !    a1(1)=TempPB%NPar
+          !    a1(2)=TempPB%NParNormal
+          !    a2(1)=TempPB%Charge
+          !    a2(2)=TempPB%Mass
+          !    a2(3)=TempPB%Weight
+          !    do i=1,a1(1)
+          !      a3(i,1)=TempPB%PO(i)%X
+          !      a3(i,2)=TempPB%PO(i)%Vx
+          !      a3(i,3)=TempPB%PO(i)%Vy
+          !      a3(i,4)=TempPB%PO(i)%Vz
+          !      a3(i,5)=TempPB%PO(i)%Ax
+          !      a3(i,6)=TempPB%PO(i)%Ay
+          !      a3(i,7)=TempPB%PO(i)%Az
+          !    End do
+          !    !ceshi ceshi
+          !    call h5f%initialize(Filename, status='new',action='w')
+          !    call h5f%write('/x',a1)
+          !    call h5f%write('/y',a2)
+          !    call h5f%write('/z',a3)
+          !    call h5f%finalize()
+          !    Write(*,*) 'Saving ', trim(TempPB%SO%Name),' Complete!'  
+          !    return
+          !end subroutine  DumpParticleBundle
+          !
+          !subroutine LoadParticleBundle(PB,Status)
+          !    implicit none
+          !    Class(ParticleBundle),intent(inout) :: PB
+          !    Logical,intent(inout) ::  Status
+          !    Logical :: alive
+          !    Character(len=99) :: Filename
+          !    Integer(4) :: i,NameIndex,NPArMax
+          !    Integer(4) :: b1(2)
+          !    real(8) :: b2(3)
+          !    real(8),allocatable :: b3(:,:)
+          !    NameIndex=DefaultNameIndex
+          !    Write(Filename,*) NameIndex,trim(PB%SO%Name),".h5"
+          !    !Write(Filename,*)trim(adjustl(PB%SO%Name)),".h5"
+          !    Filename=adjustl(Filename)
+          !    inquire(file=Filename,exist=alive)
+          !    If(alive) then
+          !           call h5f%initialize(Filename, status='old',action='r')
+          !           call h5f%read('/x',b1)
+          !           call h5f%read('/y',b2)
+          !           PB%NPar=b1(1)
+          !           PB%NParNormal=b1(2)
+          !           PB%Charge=b2(1)
+          !           PB%Mass=b2(2)
+          !           PB%Weight=b2(3)
+          !           allocate(b3(PB%NPar,7))
+          !           call h5f%read('/z',b3)
+          !           call h5f%finalize()
+          !           Write(*,*) 'Loading ', trim(PB%SO%Name), PB%NPar,' Please Wait...' 
+          !            NPArMax=Ceiling(2.5*PB%NParNormal)
+          !            !If(Allocated(PB%PO)) Deallocate(PB%PO)
+          !           ! Allocate(PB%PO(NPArMax))
+          !            do i=1,PB%NPar
+          !              PB%PO(i)%X=b3(i,1)
+          !              PB%PO(i)%Vx=b3(i,2)
+          !              PB%PO(i)%Vy=b3(i,3)
+          !              PB%PO(i)%Vz=b3(i,4)
+          !              PB%PO(i)%Ax=b3(i,5)
+          !              PB%PO(i)%Ay=b3(i,6)
+          !              PB%PO(i)%Az=b3(i,7)
+          !           End do
+          !           Status=.False.
+          !           Write(*,*) 'Loading ', trim(PB%SO%Name),' Complete!'   
+          !     else
+          !           Write(*,*) 'Can not find the file for ', trim(PB%SO%Name),' the particle will be randomly initilalized.'    
+          !           Status=.True. 
+          !     End if        
+          !    return
+          !end subroutine  LoadParticleBundle
+          
+          
+subroutine DumpParticleBundleOld(PB,Mode)
+                implicit none
+                Class(ParticleBundle),intent(inout) :: PB
+                Type(ParticleBundle) :: TempPB
+                Integer(4),intent(in)  :: Mode
+                Character(len=99) :: Filename
+                Integer(4) :: i,NameIndex
+                Real(8) :: XFactor,YFactor
+                Integer(4),save :: NameTimer=1
+                If (Mode==0) Then
+                           NameIndex=DefaultNameIndex
+                else
+                           NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
+                           NameTimer=NameTimer+1
+                End If 
+                TempPB=PB
+                   Write(*,*) this_image(),"myid333"
+                !pause
+                Call TempPB%PosRes
+                Call TempPB%VelRes
+                Write(filename,*) NameIndex,trim(TempPB%SO%Name),this_image(),".dat"
+                !pause
+                Write(*,*) 'Saving ', trim(TempPB%SO%Name), TempPB%NPar,' Please Wait...' 
+                open (10,file=filename)
+                Write(10,*) TempPB%NPar,TempPB%NParNormal
+                Write(10,*) TempPB%Charge,TempPB%Mass,TempPB%Weight
+                !Dim=Sizeof(TempPB%PO(1))/8_4
+                do i=1,TempPB%NPar
+                     Write(10,FMt="(*(es21.14,1x))")  TempPB%PO(i)
+                End do
+                close(10)
+                Write(*,*) 'Saving ', trim(TempPB%SO%Name),' Complete!'  
+                return
+            end subroutine  DumpParticleBundleOld
+   
+            subroutine LoadParticleBundleOld(PB,Status)
+                implicit none
+                Class(ParticleBundle),intent(inout) :: PB
+                Logical,intent(inout) ::  Status
+                Logical :: alive
+                Character(len=99) :: Filename
+                Integer(4) :: i,NameIndex,NPArMax
+                NameIndex=DefaultNameIndex
+                Write(filename,*) NameIndex,trim(PB%SO%Name),this_image(),".dat"
+                Inquire(file=filename,exist=alive)
+                If(alive) then
+                       Open (10,file=filename)
+                       Read(10,*) PB%NPar,PB%NParNormal
+                       Read(10,*)  PB%Charge, PB%Mass, PB%Weight
+                       Write(*,*) 'Loading ', trim(PB%SO%Name), PB%NPar,' Please Wait...' 
+                        NPArMax=Ceiling(2.5*PB%NParNormal)
+                        If(Allocated(PB%PO)) Deallocate(PB%PO)
+                        Allocate(PB%PO(NPArMax))
+                       do i=1,PB%NPar
+                             Read(10,*)  PB%PO(i)
+                       end do
+                       Status=.False.
+                       Write(*,*) 'Loading ', trim(PB%SO%Name),' Complete!'   
+                 else
+                       Write(*,*) 'Can not find the file for ', trim(PB%SO%Name),' the particle will be randomly initilalized.'    
+                       Status=.True. 
+                 End if        
+                return
+            end subroutine  LoadParticleBundleOld
+          
           
           Subroutine ParticleBundleNormalization(PB,NParNew) 
             Implicit none
