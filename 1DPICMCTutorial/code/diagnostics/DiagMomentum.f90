@@ -4,7 +4,7 @@ Module DiagnosticsMomentum
     Use ModuleParticleBundle
     Use ModuleParticleBoundary
     Implicit none
-    Type ParticleMomentumOne!(Nx)
+    Type DiagParticleMomentumOne!(Nx)
                         !Integer(4),Len :: Nx=100
                         !Integer(4) :: IOIndex=1
                         !Integer(4) :: XStart=0,XEnd=NxMax-1
@@ -14,7 +14,7 @@ Module DiagnosticsMomentum
                         Real(8) ::  RhoOne(1:NxMax),ChiOne(1:NxMax)
                         Real(8) ::  JxOne(1:NxMax),JyOne(1:NxMax),JzOne(1:NxMax)
                         Real(8) ::  TOne(1:NxMax)
-                   EndType ParticleMomentumOne
+                   EndType DiagParticleMomentumOne
     contains
 
      Subroutine  DiagParticleFieldPeriod(GD,NSpecy,PB,FG,Mode)
@@ -25,7 +25,7 @@ Module DiagnosticsMomentum
          Type(Field),intent(in) :: FG
          Integer(4),intent(in) ::  Mode
          !Integer(4),parameter :: NSpecyMax=2_4 
-         Type(ParticleMomentumOne) ::  TempPMO
+         Type(DiagParticleMomentumOne) ::  TempPMO
          Integer(4) :: i,j,Shift
          Real(8) :: HeatingRate(FG%Nx)
          Select Type (GD)
@@ -35,7 +35,7 @@ Module DiagnosticsMomentum
                     case(0)
                         Shift=1
                         Do i=0, NSpecy
-                                      Call WeightingParticleMomentum(PB(i),TempPMO)
+                                      Call DiagWeightingParticleMomentum(PB(i),TempPMO)
                                       Call GD%Update(GD%Nx,TempPMO%RhoOne,Shift)
                                       Call GD%Update(GD%Nx,TempPMO%JxOne,Shift)
                                       Call GD%Update(GD%Nx,TempPMO%TOne,Shift)
@@ -62,7 +62,7 @@ Module DiagnosticsMomentum
                         case(0)
                             Shift=1
                              Do i=0, NSpecy
-                                          Call WeightingParticleMomentum(PB(i),TempPMO)
+                                          Call DiagWeightingParticleMomentum(PB(i),TempPMO)
                                           Call GD%Update(GD%Nx,TempPMO%RhoOne,Shift)
                                           Call GD%Update(GD%Nx,TempPMO%JxOne,Shift)
                                           Call GD%Update(GD%Nx,TempPMO%TOne,Shift)
@@ -86,10 +86,10 @@ Module DiagnosticsMomentum
         Return    
      End Subroutine  DiagParticleFieldPeriod
 
-  subroutine WeightingParticleMomentum(PB,PMO)
+  subroutine DiagWeightingParticleMomentum(PB,PMO)
                 implicit none
                 Type(ParticleBundle),intent(in) :: PB
-                Type(ParticleMomentumOne),intent(inout) :: PMO
+                Type(DiagParticleMomentumOne),intent(inout) :: PMO
                 Real(8) :: RhoFactor,ChiFactor,JFactor,TFactor
                 Real(8) :: S1,S2,Energy
                 Integer(4) :: i,N
@@ -137,7 +137,7 @@ Module DiagnosticsMomentum
                 PMO%ChiOne(1)=2.d0*PMO%ChiOne(1)
                 PMO%ChiOne(PMO%Nx)=2.d0*PMO%ChiOne(PMO%Nx)
                 return
-  end subroutine WeightingParticleMomentum
+  end subroutine DiagWeightingParticleMomentum
     End Module DiagnosticsMomentum
 !!   
 !!    
