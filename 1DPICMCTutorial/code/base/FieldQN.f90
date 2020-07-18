@@ -18,7 +18,7 @@ Module ModuleFieldQN
                   ! EndType Field
                    
                     Type FieldSolverQNSheath
-                        Integer(4) :: Nx=NxMax,Nxs=NxMax,Nsheath=0
+                        Integer(4) :: Nx=NxMax,Nxs=0,Nsheath=0
                         Real(8) :: Dx=Inputdx,Dt=Inputdt
                         Real(8),Allocatable :: Source(:)
                         Real(8),Allocatable :: Solve(:)
@@ -68,12 +68,16 @@ Module ModuleFieldQN
                        Deallocate(FSQNS%CoeB)
                        Deallocate(FSQNS%CoeC)
                     End If
-                    !FSQNS%Nxs=2*FSQNS%Nsheath+1
+
+                    If (FSQNS%Nsheath/=0) Then
+                    FSQNS%Nxs=2*FSQNS%Nsheath+1
                     Allocate(FSQNS%Source(FSQNS%Nxs))
                     Allocate(FSQNS%Solve(FSQNS%Nxs))
                     Allocate(FSQNS%CoeA(FSQNS%Nxs)) 
                     Allocate(FSQNS%CoeB(FSQNS%Nxs))
                     Allocate(FSQNS%CoeC(FSQNS%Nxs))
+                    End If
+                    
                     return
     end subroutine InitFieldSolverQNSheath
     
@@ -91,11 +95,11 @@ Module ModuleFieldQN
                     Implicit none
                     Class(FieldSolverQNSheath),intent(inout) :: FSQNS
                     Type(FieldSolverQNBulk),intent(in) :: FSQNB
-                    Integer(4) :: i
+                    Integer(4) :: i,NSheathMax
                     
                     Do i=1,FSQNB%Nx
                        If(ABS(FSQNB%Vi(i))>ABS(FSQNB%Vbohm(i))) Then
-                         FSQNS%NSheath=i+1
+                         NSheathMax=i+1
                          exit
                        ENd if
                     ENd do
@@ -110,27 +114,21 @@ Module ModuleFieldQN
                     Integer(4) :: i,NSheathNew=0,NSheathMax=0
                     !Logical@:: 
                     
-                    NSheathMax=(FSQNS%Nx-1)/2                    
+                    NSheathMax=(FSQNS%Nx+1)/2                    
                     NSheathNew=0
                     
-                    Do i=1,NSheathMax
+                    
+
+                    Do i=NSheathMax,1
                        If(ABS(FSQNB%Vi(i))>ABS(FSQNB%Vbohm(i))) Then
-                         NSheathNew=i
+                         NSheathNew=NSheathMax-i
                          Exit
                        ENd if
                     ENd do
                     
-                    If (NSheathNew<=NSheathMax) Then
-                        
-                    Else 
-                        
-                    
-                    If (NSheathNew=0) Then
-                        FSQNS%Nxs=FSQNS%Nx
-                        Else ()
-                       
-                      FSQNS%Nxs=2*FSQNS%Nsheath+1
-                    
+                    If (NSheathNew>FSQNS%Nsheath) Then
+                       FSQNS%Nsheath=NSheathNew
+                    End If
                     
                     Call FSQNS%Init
                     return
