@@ -1,8 +1,8 @@
 Module ModuleControlFlow
      Use Constants
      Implicit none
-              Integer(4),Parameter :: NxMax=321
-              Real(8),parameter,private :: ZLength=0.1d0
+              Integer(4),Parameter :: NxMax=65
+              Real(8),parameter,private :: ZLength=0.02d0
               Real(8),parameter :: Inputdx=ZLength/dble(NxMax-1)
               Real(8),parameter:: Inputdt=1.d-10  !4.d-12
               
@@ -13,8 +13,8 @@ Module ModuleControlFlow
      !  Ns--NSpecy,Ng---NGas
      Type ControlFlow
            Real(8)  :: Dx=Inputdx,Dt=Inputdt
-           Integer(4) :: ParticlePerGrid=400
-           Real(8)  :: InitDensity=1.d15
+           Integer(4) :: ParticlePerGrid=200
+           Real(8)  :: InitDensity=1.d16
 
            Integer(4) :: Ns=0,Ng=0
            Integer(4) :: Nx=NxMax,NxL=0,NxU=NxMax-1

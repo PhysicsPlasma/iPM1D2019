@@ -1,8 +1,8 @@
-Module ModuleOneStepQN
+Module ModuleOneStep
       Use ModuleParticleBundle
       Use ModuleSpecyOne
       Use ModuleMCCPublic
-      Use ModuleOneStepField
+      Use ModuleOneStepFieldQN
       Use ModuleMCCInitialization
       
       !Use MoveModule
@@ -48,9 +48,10 @@ Module ModuleOneStepQN
                      !Call WeightingOne(ParticleGlobal(i),FieldOneGlobal(i))
                      Call ParticleGlobal(i)%WeightP2C(FieldOneGlobal(i))
                end do
-               Call FieldOneStep(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal)
+               Call FieldOneStepQN(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal,FieldSolverQNSheathGlobal,FieldSolverQNBulkGlobal,ParticleGlobal)
+               !Call FieldOneStep(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal)
                !Write(*,*) "Period Before",ParticleGlobal%NPar
-               !Call MCC(ControlFlowGlobal%Ns,ControlFlowGlobal%Ng,ParticleGlobal,SpecyGlobal,GasGlobal,MCCBundleGlobal) 
+               Call MCC(ControlFlowGlobal%Ns,ControlFlowGlobal%Ng,ParticleGlobal,SpecyGlobal,GasGlobal,MCCBundleGlobal) 
                
                !Write(*,*) "Period After",ParticleGlobal%NPar
               return
@@ -71,7 +72,7 @@ Module ModuleOneStepQN
               return
         End  subroutine OneStepRestart
  
-    End Module ModuleOneStepQN
+    End Module ModuleOneStep
     
     
        

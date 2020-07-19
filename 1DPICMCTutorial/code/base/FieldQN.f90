@@ -26,20 +26,22 @@ Module ModuleFieldQN
                         contains
                              procedure :: Init=>InitFieldSolverQNSheath
                              procedure :: UpdateNsheath=>UpdateNsheathFieldSolverQNSheath
-                             procedure :: UpdateSource=>UpdateSourceFieldSolverQNSheath
+                             !procedure :: UpdateSource=>UpdateSourceFieldSolverQNSheath
                         EndType FieldSolverQNSheath
                         
                     Type FieldSolverQNBulk
-                        Integer(4) :: Nx=NxMax 
+                        Integer(4) :: Nx=NxMax,NL=1,NR=NxMax,Nbulk=0
                         !,NL=0,NR=NxMax
                         Real(8) :: Dx=Inputdx,Dt=Inputdt
                         Real(8) :: Ni(1:NxMax)=0.d0,Vi(1:NxMax)=0.d0,Te(1:NxMax)=0.d0
                         Real(8) :: Vbohm(1:NxMax)=0.d0
                         Real(8) :: Eb(1:NxMax)=0.d0
                         !Real(8),Allocatable :: Eb(:)
-                        contains
+                    contains
                           !procedure :: Init=>InitFieldSolverQNBulk
+                          !procedure :: Update=>UpdateOneStepFieldSolverQNBulk
                           procedure :: UpdateE=>UpdateEFieldFieldSolverQNBulk
+                          procedure :: UpdatenT=>UpdatenTFieldSolverQNBulk
                         EndType FieldSolverQNBulk
                         
                     Type ParticleMomentumOne!(Nx)
@@ -68,15 +70,15 @@ Module ModuleFieldQN
                        Deallocate(FSQNS%CoeB)
                        Deallocate(FSQNS%CoeC)
                     End If
-
-                    If (FSQNS%Nsheath/=0) Then
-                    FSQNS%Nxs=2*FSQNS%Nsheath+1
+                    !
+                    !If (FSQNS%Nsheath/=0) Then
+                    !FSQNS%Nxs=2*FSQNS%Nsheath+1
                     Allocate(FSQNS%Source(FSQNS%Nxs))
                     Allocate(FSQNS%Solve(FSQNS%Nxs))
                     Allocate(FSQNS%CoeA(FSQNS%Nxs)) 
                     Allocate(FSQNS%CoeB(FSQNS%Nxs))
                     Allocate(FSQNS%CoeC(FSQNS%Nxs))
-                    End If
+                    !End If!
                     
                     return
     end subroutine InitFieldSolverQNSheath
@@ -94,54 +96,65 @@ Module ModuleFieldQN
             subroutine UpdateNsheathFieldSolverQNSheath(FSQNS,FSQNB)
                     Implicit none
                     Class(FieldSolverQNSheath),intent(inout) :: FSQNS
-                    Type(FieldSolverQNBulk),intent(in) :: FSQNB
-                    Integer(4) :: i,NSheathMax
+                    Type(FieldSolverQNBulk),intent(inout) :: FSQNB
+                    Integer(4) :: i,NSheathMax=24
                     
-                    Do i=1,FSQNB%Nx
-                       If(ABS(FSQNB%Vi(i))>ABS(FSQNB%Vbohm(i))) Then
-                         NSheathMax=i+1
-                         exit
-                       ENd if
-                    ENd do
+                    FSQNS%Nsheath=NSheathMax
+                    FSQNS%Nxs=2*(FSQNS%Nsheath-1)+1
+                    FSQNB%NL=FSQNS%Nsheath+1 
+                    FSQNB%NBulk=FSQNB%Nx-2-2*FSQNS%Nsheath
+                    FSQNB%NR=FSQNB%NL+FSQNB%NBulk
+                    
                     Call FSQNS%Init
                     return
             end subroutine UpdateNsheathFieldSolverQNSheath
             
-        subroutine UpdateNsheathFieldSolverQNSheath(FSQNS,FS)
-                    Implicit none
-                    Class(FieldSolverQNSheath),intent(inout) :: FSQNS
-                    Type(FieldSolverQNBulk),intent(in) :: FSQNB
-                    Integer(4) :: i,NSheathNew=0,NSheathMax=0
-                    !Logical@:: 
-                    
-                    NSheathMax=(FSQNS%Nx+1)/2                    
-                    NSheathNew=0
-                    
-                    
+        !subroutine UpdateNsheathFieldSolverQNSheath(FSQNS,FS)
+        !            Implicit none
+        !            Class(FieldSolverQNSheath),intent(inout) :: FSQNS
+        !            Type(FieldSolverQNBulk),intent(in) :: FSQNB
+        !            Integer(4) :: i,NSheathNew=0,NSheathMax=0
+        !            !Logical@:: 
+        !            
+        !            NSheathMax=(FSQNS%Nx+1)/2                    
+        !            NSheathNew=0
+        !            
+        !            
+        !
+        !            Do i=NSheathMax,1
+        !               If(ABS(FSQNB%Vi(i))>ABS(FSQNB%Vbohm(i))) Then
+        !                 NSheathNew=NSheathMax-i
+        !                 Exit
+        !               ENd if
+        !            ENd do
+        !            
+        !            If (NSheathNew>FSQNS%Nsheath) Then
+        !               FSQNS%Nsheath=NSheathNew
+        !            End If
+        !            
+        !            Call FSQNS%Init
+        !            return
+        !            
+        !End subroutine UpdateNsheathFieldSolverQNSheath
+            
 
-                    Do i=NSheathMax,1
-                       If(ABS(FSQNB%Vi(i))>ABS(FSQNB%Vbohm(i))) Then
-                         NSheathNew=NSheathMax-i
-                         Exit
-                       ENd if
-                    ENd do
-                    
-                    If (NSheathNew>FSQNS%Nsheath) Then
-                       FSQNS%Nsheath=NSheathNew
-                    End If
-                    
-                    Call FSQNS%Init
-                    return
-                    
-        End subroutine UpdateNsheathFieldSolverQNSheath
         
         subroutine UpdateEFieldFieldSolverQNBulk(FSQNB)
                     Implicit none
                     Class(FieldSolverQNBulk),intent(inout) :: FSQNB
-                    Real(8) :: nTn(1:FSQNB%Nx),nTc(1:FSQNB%Nx+1),GradY(1:FSQNB%Nx),GradZ(1:FSQNB%Nx)
+                    Real(8) :: i,nTn(1:FSQNB%Nx),nTc(1:FSQNB%Nx+1),GradY(1:FSQNB%Nx),GradZ(1:FSQNB%Nx)
+                    
                     nTn=FSQNB%Ni*FSQNB%Te
+
                     Call Interpolation1DX(nTc, nTn)
-                    Call Grad1DX(FSQNB%Eb, GradY, GradZ, nTc, FSQNB%dx)
+                    
+                    Call Grad1DX(nTn, GradY, GradZ, nTc, FSQNB%dx)
+                    
+                    FSQNB%Eb=-1.d0*nTn/FSQNB%Ni/ElectronCharge
+                    
+                    !Do i=FSQNB%NL,FSQNB%NR
+                    !   
+                    !End DO
                     return
         end subroutine UpdateEFieldFieldSolverQNBulk
 
@@ -149,22 +162,22 @@ Module ModuleFieldQN
                     Implicit none
                     Class(FieldSolverQNBulk),intent(inout) :: FSQNB
                     Integer(4),intent(in) :: Ns
-                    Type(ParticleBundle),intent(in) :: PB(Ns)
-                    Type(ParticleMomentumOne):: PMO(Ns)
+                    Type(ParticleBundle),intent(in) :: PB(0:Ns)
+                    Type(ParticleMomentumOne):: PMO(0:Ns)
                     Integer(4) :: i
                     
                     FSQNB%Te=0.d0
                     FSQNB%Ni=0.d0
                     FSQNB%Vi=0.d0
                     
-                    Do i=1,Ns
+                    Do i=0,Ns
                        Call WeightingParticleMomentum(PB(i),PMO(i))
                     End Do
                     
-                    FSQNB%Te=PMO(1)%T
+                    FSQNB%Te=PMO(0)%T
                     
-                    Do i=2,Ns
-                       PMO(i)%Vbohm=DSQRT(PMO(1)%T/PB(i)%Mass)
+                    Do i=1,Ns
+                       PMO(i)%Vbohm=DSQRT(PMO(0)%T/PB(i)%Mass)
                        FSQNB%Ni=FSQNB%Ni+PMO(i)%N
                        FSQNB%Vi=FSQNB%Vi+PMO(i)%V
                        FSQNB%Vbohm= FSQNB%Vbohm+PMO(i)%Vbohm
