@@ -18,6 +18,7 @@ Module ModuleParticleBundle
            Procedure :: PosRes=>PositionRescaleParticleBundle
            Procedure :: VelRes=>VelocityRescaleParticleBundle
            Procedure :: MoveES=>MoveElectrostaticParticleBundle
+           Procedure :: MoveExES=>MoveExElectrostaticParticleBundle
            Procedure :: MoveEM=>MoveElectromagneticParticleBundle
            Procedure :: WeightP2C=>WeightP2CParticleBundle
            Procedure :: Dump=>DumpParticleBundle
@@ -155,7 +156,20 @@ Module ModuleParticleBundle
                       Ex=Ex*EFactor
                       Call PB%PO(i)%MoveES(Ex)
                 End Do
-             End subroutine MoveElectrostaticParticleBundle  
+            End subroutine MoveElectrostaticParticleBundle
+            
+            subroutine MoveExElectrostaticParticleBundle(PB,FG)
+		       Class(ParticleBundle), intent(inout) :: PB
+               Class(Field), intent(inout) :: FG
+               Integer(4) :: i
+               Real(8) :: Ex,Ey,Ez,EFactor
+               EFactor=PB%Charge/PB%Mass*PB%dt/(PB%dx/PB%dt)
+                Do i=1,PB%NPar
+                      Call PB%PO(i)%WeightC2PES(FG,Ex)
+                      Ex=Ex*EFactor
+                      Call PB%PO(i)%MoveExES(Ex)
+                End Do
+             End subroutine MoveExElectrostaticParticleBundle  
 
             Subroutine MoveElectromagneticParticleBundle(PB,FG)
 		       Class(ParticleBundle), intent(inout) :: PB

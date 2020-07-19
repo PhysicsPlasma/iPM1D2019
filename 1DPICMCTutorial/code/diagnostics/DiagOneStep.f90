@@ -3,7 +3,7 @@ Module ModuleDiagOneStep
       Use DiagnosticsCollisionRate
       Use DiagnosticsEEPF
       Use DiagnosticsMomentum
-      Use ModuleOneStepField
+      Use ModuleOneStepFieldEx
       Use ModuleOneStep
       Use DiagnosticsTestParticle
       

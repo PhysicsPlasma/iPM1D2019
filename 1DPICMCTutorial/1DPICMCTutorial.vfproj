@@ -60,7 +60,10 @@
 		<Filter Name="pic">
 		<File RelativePath=".\code\pic\FieldBounday.F90"/>
 		<File RelativePath=".\code\pic\FieldOneStep.f90"/>
-		<File RelativePath=".\code\pic\FieldOnStepQN.f90"/></Filter>
+		<File RelativePath=".\code\pic\FieldOneStepEx.f90"/>
+		<File RelativePath=".\code\pic\FieldOnStepQN.f90"/>
+		<File RelativePath=".\code\pic\FieldOnStepQNEx.f90"/></Filter>
 		<File RelativePath=".\code\Main.F90"/>
-		<File RelativePath=".\code\OneStep.F90"/></Filter></Files>
+		<File RelativePath=".\code\OneStep.F90"/>
+		<File RelativePath=".\code\OneStepEx.F90"/></Filter></Files>
 	<Globals/></VisualStudioProject>

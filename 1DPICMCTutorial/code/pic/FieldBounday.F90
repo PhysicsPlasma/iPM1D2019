@@ -51,7 +51,7 @@ Module ModuleFieldBoundary
 
             Select case (FB%FieldBoundaryModel)
                       case (11)
-                               FB%V1=FB%Voltage(1)*DCOs(2*PI*FB%Frequency(1)*FB%dt*Dble(FB%Timer))
+                               FB%V1=FB%Voltage(1)*DSin(2*PI*FB%Frequency(1)*FB%dt*Dble(FB%Timer))
                                FB%V2=0.d0
                                !Write (*,*) FB%V1,FB%V2
                       case (21)

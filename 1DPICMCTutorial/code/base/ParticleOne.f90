@@ -24,6 +24,7 @@ Module ModuleParticleOne
           
           procedure :: WeightC2PES=>WeightC2PElectrostaticParticleOne
           procedure :: MoveES=>MoveElectrostaticParticleOne
+          procedure :: MoveExES=>MoveExElectrostaticParticleOne
 
           procedure :: WeightC2PEM=>WeightC2PElectromagneticParticleOne
           procedure :: MoveEM=>MoveElectromagneticParticleOne
@@ -231,7 +232,14 @@ Module ModuleParticleOne
                 PO%Ax=0.5d0*(PO%Ax+Ex)
                 PO%Vx=PO%Vx+0.5d0*PO%Ax
                 PO%X=PO%X+PO%Vx
-          End subroutine  MoveElectrostaticParticleOne
+         End subroutine  MoveElectrostaticParticleOne
+         
+        Subroutine MoveExElectrostaticParticleOne(PO,Ex)
+            Class(ParticleOne), intent(inout) :: PO
+            Real(8),intent(in),optional :: Ex
+                PO%Vx=PO%Vx+Ex
+                PO%X=PO%X+PO%Vx
+         End subroutine  MoveExElectrostaticParticleOne 
          
          subroutine MoveElectromagneticParticleOne(PO,Ex,Ey,Ez,Bx,By,Bz)
             Class(ParticleOne), intent(inout) :: PO
