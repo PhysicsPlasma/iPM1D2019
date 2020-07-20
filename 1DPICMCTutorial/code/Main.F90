@@ -15,8 +15,10 @@
    Call AllInitilalization()
    
    !Call CPU_TIME(CPU1)
-   DO j=1,NRun
-   do i=1,ControlFlowGlobal%Period
+   !DO j=1,NRun
+   !do i=1,ControlFlowGlobal%Period
+   DO j=1,1
+   do i=1,5!ControlFlowGlobal%Period
         Call OneStep()
          If (ParticleGlobal(0)%Npar>ParticleGlobal(0)%NParNormal) then
                      do k=0,1                
