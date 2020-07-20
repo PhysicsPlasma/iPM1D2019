@@ -6,10 +6,10 @@ Module ModuleFieldBoundary
   Implicit none
      Type FieldBoundary
                         !Integer(4) :: XStart=0,XEnd=1
-                         Integer(4) :: FieldBoundaryModel=21
+                         Integer(4) :: FieldBoundaryModel=11
                          Integer(4) :: Timer=0,Period
                          Real(8) :: Dt=Inputdt
-                         Real(8) :: Frequency(2)=(/60.d6,2.d6/),Voltage(2)=(/1000.d0,100.d0/)
+                         Real(8) :: Frequency(2)=(/13.56d6,2.d6/),Voltage(2)=(/200.d0,100.d0/)
                          Real(8) :: V1=0.d0,V2=0.d0
                          Real(8) :: Vdc=0.d0!-20.d0
                          Contains
@@ -51,7 +51,7 @@ Module ModuleFieldBoundary
 
             Select case (FB%FieldBoundaryModel)
                       case (11)
-                               FB%V1=FB%Voltage(1)*DCOs(2*PI*FB%Frequency(1)*FB%dt*Dble(FB%Timer))
+                               FB%V1=FB%Voltage(1)*DSin(2*PI*FB%Frequency(1)*FB%dt*Dble(FB%Timer))
                                FB%V2=0.d0
                                !Write (*,*) FB%V1,FB%V2
                       case (21)

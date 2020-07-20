@@ -1,7 +1,7 @@
 &Ngfile
 Ng           =   1
-GasName      =   He
-PGas         =   10.0
+GasName      =   Ar
+PGas         =   200.0
 TGas         =   300.0
 TElectron    =   30000.0
 GasRatio     =   1.0,0.0,
