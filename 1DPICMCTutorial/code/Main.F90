@@ -9,7 +9,7 @@
    real(8) Cpu1,Cpu2 
    
     !  Integer(4) :: NRun=1,NDiagShort=1,NDiagLong=0
-   Integer(4) :: NRun=1000,NDiagShort=1,NDiagLong=0
+   Integer(4) :: NRun=10,NDiagShort=1,NDiagLong=0
    !Integer(4) :: NRun=10000,NDiagShort=200,NDiagLong=200
       
    Call AllInitilalization()

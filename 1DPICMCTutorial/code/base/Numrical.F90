@@ -36,7 +36,7 @@ Module Numrical
       rM = rN
       return
     end if
-    If ( mod( n , m ) == 0 ) then !// 常规整个数平均
+    If ( mod( n , m ) == 0 ) then !// 常规整个数平緛E
       e = n / m
       Do i = 1 , m
         rs = 0.0
@@ -45,7 +45,7 @@ Module Numrical
         End Do
         rM(i) = rs
       End Do
-    Else !// 小数个数平均
+    Else !// 小数个数平緛E
       re = n*1.0 / m*1.0
       rl = 0.0
       k = 1
@@ -53,7 +53,7 @@ Module Numrical
         rs = 0.0
         add = re
         rtmp = rl - int(rl)
-        if ( rtmp > 0.0001 ) then !// 如果上次有剩余
+        if ( rtmp > 0.0001 ) then !// 如果上次有剩觼E
           rs = rs + rN(k)*(1.0-rtmp)/re
           add = add - (1.0-rtmp)
           k = k + 1
@@ -63,7 +63,7 @@ Module Numrical
           k = k + 1
           add = add - 1.0
         End Do
-        if ( add > 0.0001 ) then !//如果本次有剩余
+        if ( add > 0.0001 ) then !//如果本次有剩觼E
           rs = rs + rN(k)*add / re
         end if
         rM(i) = rs

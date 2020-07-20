@@ -214,8 +214,8 @@ Module ModuleFieldQN
                    PMO%V(N+1)=PMO%V(N+1)+S2*PB%PO(i)%Vx
 
                    !Energy=PB%PO(i)%Energy(PB%Mass,PB%VFactor)
-                   Energy=0.5d0*PB%Mass*(PB%PO(i)%Vx*PB%PO(i)%Vx)*PB%VFactor*PB%VFactor
-                
+                   !Energy=0.5d0*PB%Mass*(PB%PO(i)%Vx*PB%PO(i)%Vx)*PB%VFactor*PB%VFactor
+                   Energy=PB%Mass*(PB%PO(i)%Vx*PB%PO(i)%Vx)*PB%VFactor*PB%VFactor
                    PMO%T(N)=PMO%T(N)+S1*Energy
                    PMO%T(N+1)=PMO%T(N+1)+S2*Energy
                 end do
