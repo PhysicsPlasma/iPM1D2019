@@ -33,6 +33,7 @@
 		<File RelativePath=".\code\base\Constants.f90"/>
 		<File RelativePath=".\code\base\ControlFlow.f90"/>
 		<File RelativePath=".\code\base\Field.f90"/>
+		<File RelativePath=".\code\pic\FieldOnStepQN2D.f90"/>
 		<File RelativePath=".\code\base\FieldQN.f90"/>
 		<File RelativePath=".\code\base\Grid.f90"/>
 		<File RelativePath=".\code\base\Numrical.F90"/>

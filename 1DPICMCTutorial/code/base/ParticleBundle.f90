@@ -24,6 +24,7 @@ Module ModuleParticleBundle
            Procedure :: Dump=>DumpParticleBundle
            Procedure :: Load=>LoadParticleBundle
            Procedure :: Norm=>ParticleBundleNormalization
+           Procedure :: InjectRegional=>InjectRegionalParticleBundle
            !Procedure :: RescaleFieldOne=>RescaleFieldOneParticleBundle
            End Type ParticleBundle
            
