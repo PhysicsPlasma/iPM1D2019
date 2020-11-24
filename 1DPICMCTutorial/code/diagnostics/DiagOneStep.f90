@@ -15,8 +15,8 @@ Module ModuleDiagOneStep
       Type(Grid1D(Nx=NxMax,Ns=3)),save :: G1DDiagParticleCR
       Type(Grid2D(Nx=NxMax,Ny=100,Ns=3)),save :: G2DDiagParticleCR
 
-      Type(Grid1D(Nx=500,Ns=2)),save :: G1DDiagParticleEDF
-      Type(Grid2D(Nx=500,Ny=100,Ns=2)),save :: G2DDiagParticleEDF
+      Type(Grid1D(Nx=1200,Ns=2)),save :: G1DDiagParticleEDF
+      Type(Grid2D(Nx=1200,Ny=100,Ns=2)),save :: G2DDiagParticleEDF
       
       !Type(ParticleElectrode),save :: ParticleElectrodeGlobal(0:NsMax)
       

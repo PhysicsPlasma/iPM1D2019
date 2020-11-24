@@ -1,5 +1,5 @@
 &ControlFlow
-CF%InitDensity        =   1.d16,
+CF%InitDensity        =   1.d17,
 !CF%NRun               =   1000,
 !CF%NDiagShort         =   200,
 !CF%NDiagLong          =   200,

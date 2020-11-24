@@ -8,8 +8,8 @@ Module ModuleParticleBoundary
                          Real(8) :: XMin=0.d0,XMax=dble(NxMax-1)!,XLength=99.d0 
                          Integer :: CountMinOne=0,CountmaxOne=0
                          Integer :: CountMin=0,Countmax=0
-                         !Real(8) :: Gamma=0.1
-                         !Integer(4) :: SEENparMin,SEENparMax
+                         Real(8) :: Gamma=0.1
+                         Integer(4) :: SEECountMinOne,SEECountMaxOne
                          Type(ParticleBundle) :: PBLower,PBUpper
                          Contains
                          Procedure :: AllInit=>InitializationParticleBoundaryOne

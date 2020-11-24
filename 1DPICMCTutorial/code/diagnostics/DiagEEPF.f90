@@ -26,7 +26,8 @@ Module DiagnosticsEEPF
             PEDF%Mass=PB%Mass
 
             Select Type (GD)
-                  Type is (Grid1D(*,*))
+            Type is (Grid1D(*,*))
+                GD%Dx=PEDF%EnergyInterval
                      Select Case (Mode)
                         Case(-1)
                             !Call GridInitialization(GD,PB%Period,PEDF%EnergyInterval,PB%Dt)
@@ -47,7 +48,8 @@ Module DiagnosticsEEPF
                              Call GD%Dump(0)
                          case default
                          End Select
-                    Type is (Grid2D(*,*,*))
+            Type is (Grid2D(*,*,*))
+                GD%Dx=PEDF%EnergyInterval
                         Select Case (Mode)
                             Case(-1)
                                 !Call GridInitialization(GD,PB%Period,PEDF%EnergyInterval,PB%Dt)

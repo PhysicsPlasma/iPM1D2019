@@ -1,10 +1,10 @@
 Module ModuleControlFlow
      Use Constants
      Implicit none
-              Integer(4),Parameter :: NxMax=65
-              Real(8),parameter,private :: ZLength=0.02d0
+              Integer(4),Parameter :: NxMax=129
+              Real(8),parameter,private :: ZLength=200.d-6
               Real(8),parameter :: Inputdx=ZLength/dble(NxMax-1)
-              Real(8),parameter:: Inputdt=1.d-10  !4.d-12
+              Real(8),parameter:: Inputdt=5.d-13 !4.d-12
               
             Integer(4),Parameter  ::  DefaultNameIndex=10000
             Integer(4),Parameter  ::  DefaultNameIndexInit=20000

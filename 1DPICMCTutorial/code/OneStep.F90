@@ -4,7 +4,8 @@ Module ModuleOneStep
       Use ModuleMCCPublic
       Use ModuleOneStepField
       Use ModuleMCCInitialization
-      
+      use ModuleEI
+      use ModuleSEE
       !Use MoveModule
 !      Use Diagnostics
       Implicit none
@@ -47,8 +48,12 @@ Module ModuleOneStep
                      !Call Selectron(ParticleGlobal(0),ParticleBDOneGlobal(i))
                      !Call WeightingOne(ParticleGlobal(i),FieldOneGlobal(i))
                      Call ParticleGlobal(i)%WeightP2C(FieldOneGlobal(i))
+                     !!!!!二次电子
+                     Call Selectron(ParticleGlobal(i),ParticleBDOneGlobal(i))
                end do
                Call FieldOneStep(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal)
+               !!!电子束注入!!!
+               call EI(ParticleGlobal(0),ControlFlowGlobal%Dx,ControlFlowGlobal%Dt,ParticleBDOneGlobal(0)%XMin)
                !Write(*,*) "Period Before",ParticleGlobal%NPar
                Call MCC(ControlFlowGlobal%Ns,ControlFlowGlobal%Ng,ParticleGlobal,SpecyGlobal,GasGlobal,MCCBundleGlobal) 
                
