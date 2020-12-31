@@ -6,6 +6,7 @@ Module ModuleOneStepField
      Type(Field) :: FieldGlobal
      Type(FieldSolver) :: FieldSolverGlobal
      Type(FieldBoundary) :: FieldBoundaryGlobal
+     Type(FieldOne) :: FieldOneGlobalCO[2,*]
      Type(FieldOne),Allocatable :: FieldOneGlobal(:)
                   
     contains
@@ -16,6 +17,7 @@ Module ModuleOneStepField
             Call FieldBoundaryGlobal%Init(CF)
             Call FieldGlobal%Load(Status)
             Allocate(FieldOneGlobal(0:CF%Ns))
+            !Allocate(FieldOneGlobalCO(0:CF%Ns)[*])
          End subroutine InitializationField
          
     
@@ -32,7 +34,36 @@ Module ModuleOneStepField
             Call UpdaterFieldSolver(FS)
             Call UpdaterField(FG,FS,FB)
             return
-        End subroutine FieldOneStep
+         End subroutine FieldOneStep
+         
+         subroutine FieldOneStepCO(Ns,FO,FG,FB,FS)
+            Implicit none
+            Integer(4),intent(in) :: Ns
+            Type(FieldOne),intent(inout) :: FO(0:Ns)
+            !Type(FieldOne),intent(in) :: FOCO(0:Ns)
+            Type(Field),intent(inout) :: FG
+            Type(FieldSolver), intent(inout):: FS
+            Type(FieldBoundary), intent(inout):: FB
+            Integer(4) :: i,j
+            
+            do i=0,Ns
+            FO(i)%RhoOne=0.d0
+            FO(i)%ChiOne=0.d0
+            do j=1,num_images()
+               FO(i)%RhoOne=FO(i)%RhoOne+FieldOneGlobalCO[i,j]%RhoOne
+               FO(i)%ChiOne=FO(i)%ChiOne+FieldOneGlobalCO[i,j]%ChiOne
+            ENd do
+            ENd DO
+            !Call AccumulationFieldCO(FG,Ns,FO,FOCO)
+            Call AccumulationField(FG,Ns,FO)
+            Call FB%Updater
+            Call UpdaterCoeFieldSolver(FS,FG,FB)
+            Call UpdaterFieldSolver(FS)
+            Call UpdaterField(FG,FS,FB)
+            return
+         End subroutine FieldOneStepCO
+         
+
 
         subroutine AccumulationField(FG,Ns,FO)
             Implicit none

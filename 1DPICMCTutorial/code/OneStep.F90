@@ -21,7 +21,7 @@ Module ModuleOneStep
                   !Type(ParticleBundle),save ::  ParticleGlobalCO[*]
                   !,ALLOCATABLE
                   Type(ParticleBundle),CODIMENSION[:],ALLOCATABLE,save ::  ParticleGlobalCO(:)
-                  !Type(ParticleBoundaryOne),CODIMENSION[:],ALLOCATABLE,save ::  ParticleBDOneGlobal(:)
+                  Type(ParticleBoundaryOne),CODIMENSION[:],ALLOCATABLE,save ::  ParticleBDOneGlobalCO(:)
                   !Type(ParticleBoundaryOne),save,Allocatable  :: ParticleBDOneGlobal(:)[*]
                   !Type(ParticleBoundary),save  :: ParticleBDGlobal
                 
@@ -53,11 +53,11 @@ Module ModuleOneStep
              !Allocate(ParticleBDOneGlobal(0:ControlFlowGlobal%Ns))
              DO i=0,ControlFlowGlobal%Ns
                     Call ParticleGlobalCO(i)%AllInit(SpecyGlobal(i),ControlFlowGlobal)
-                    !Call ParticleBDOneGlobal(i)%AllInit(ParticleGlobal(i),ControlFlowGlobal)
+                    Call ParticleBDOneGlobalCO(i)%AllInit(ParticleGlobalCO(i),ControlFlowGlobal)
              End do
-             Write(*,*) this_image(),"myid2"
+             Write(*,*) this_image(),"myid2",ParticleGlobalCO%Npar
              !pause!
-             !Call MCCBundleInit(ControlFlowGlobal,SpecyGlobal,GasGlobal)
+             Call MCCBundleInit(ControlFlowGlobal,SpecyGlobal,GasGlobal)
             Return  
     End Subroutine AllInitilalizationCO
 
@@ -84,6 +84,31 @@ Module ModuleOneStep
                !Write(*,*) "Period After",ParticleGlobal%NPar
               return
     End  subroutine OneStep
+    
+    
+        Subroutine OneStepCO()
+             !  Use ,only : R
+               Implicit none
+               !Integer(4) :: Ntemp                   !Ntemp=ParticleGlobal(0)%NPar
+            !   Real(8)::GamaE=0.2d0,GamaI=0.2d0
+                                    !Write(*,*) ParticleBDOneGlobal%CountMinOne,ParticleBDOneGlobal%CountMin,ParticleGlobal%NPar
+               Integer(4) :: i,j
+               do i=0,ControlFlowGlobal%Ns
+                     Call ParticleGlobalCO(i)%MoveEM(FieldGlobal)
+                     !Call ParticleGlobal(i)%MoveES(FieldGlobal)
+                     !Call ParticleMove(ParticleGlobal(i),FieldGlobal)
+                     Call ParticleAborption(ParticleGlobalCO(i),ParticleBDOneGlobalCO(i))
+                     !Call Selectron(ParticleGlobal(0),ParticleBDOneGlobal(i))
+                     !Call WeightingOne(ParticleGlobal(i),FieldOneGlobal(i))
+                     Call ParticleGlobalCO(i)%WeightP2C(FieldOneGlobalCO[i,this_image()])
+               end do
+               Call FieldOneStepCO(ControlFlowGlobal%Ns,FieldOneGlobal,FieldGlobal,FieldBoundaryGlobal,FieldSolverGlobal)
+               !Write(*,*) "Period Before",ParticleGlobal%NPar
+               Call MCC(ControlFlowGlobal%Ns,ControlFlowGlobal%Ng,ParticleGlobal,SpecyGlobal,GasGlobal,MCCBundleGlobal) 
+               
+               !Write(*,*) "Period After",ParticleGlobal%NPar
+              return
+    End  subroutine OneStepCO
     
         Subroutine OneStepRestart()
                !Use FileIO 
