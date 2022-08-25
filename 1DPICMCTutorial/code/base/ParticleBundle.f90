@@ -3,7 +3,10 @@ Module ModuleParticleBundle
       Use ModuleSpecyOne
      Implicit none
      Type :: ParticleBundle
-           Integer(4) :: NPar=0,NParNormal=1000
+        Integer(4) 	:: NPar											! local  每个image中粒子数量
+        Integer(4) 	:: NParAll										! global 粒子总数
+        Integer(4) 	:: NParNormal = 1000           					! local  每个image中最大数量
+        Integer(4)  :: ParticleNumberAll = 0 						! global  NParNormal * imageSize
            Real(8) :: XFactor,VFactor
            Logical :: LXScaled=.False.,LVScaled=.False.
            Real(8) :: Charge,Mass,Weight
@@ -56,10 +59,14 @@ Module ModuleParticleBundle
                 PB%Mass=PB%SO%Mass
                 PB%Weight=CF%InitDensity/Dble(CF%ParticlePerGrid)
 
-                PB%NParNormal=CF%ParticlePerGrid*(CF%Nx-1)*PB%SO%InitDensity
-                PB%NPar=PB%NParNormal
-                
-                NPArMax=Ceiling(2.5*PB%NParNormal)
+                ! 分配每个image中粒子数
+				PB%ParticleNumberAll = CF%ParticlePerGrid * (CF%Nx-1) * PB%SO%InitDensity
+                ! FixParNum = PB%ParticleNumberAll
+				PB%NParNormal = int(dble(PB%ParticleNumberAll) / dble(imageSize))
+				PB%NPar = PB%NParNormal
+				PB%NParAll = PB%NPar * imageSize
+				NPArMax = Ceiling(4.0*PB%NParNormal)
+
                 If(Allocated(PB%PO)) Deallocate(PB%PO)
                 Allocate(PB%PO(NPArMax))
                         If (CF%ReStartParticles) Then
@@ -193,56 +200,56 @@ Module ModuleParticleBundle
                 Return
             End subroutine WeightP2CParticleBundle
             
-            subroutine DumpParticleBundle(PB,Mode)
+            subroutine DumpParticleBundle(PB,name)
                 implicit none
                 Class(ParticleBundle),intent(inout) :: PB
                 Type(ParticleBundle) :: TempPB
-                Integer(4),intent(in)  :: Mode
-                Character(len=99) :: Filename
-                Integer(4) :: i,NameIndex
+                Character(len=CharLenthMax), intent(in), optional :: name
+                Character(len=CharLenthMax) :: filename
+                Integer(4) :: i
                 Real(8) :: XFactor,YFactor
-                Integer(4),save :: NameTimer=1
-                If (Mode==0) Then
-                           NameIndex=DefaultNameIndex
-                else
-                           NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
-                           NameTimer=NameTimer+1
-                End If 
                 TempPB=PB
                 Call TempPB%PosRes
                 Call TempPB%VelRes
-                Write(filename,*) NameIndex,trim(TempPB%SO%Name),".dat"
-                Write(*,*) 'Saving ', trim(TempPB%SO%Name), TempPB%NPar,' Please Wait...' 
+                Write(filename, '(a, a, a, i3, a)') "./restart/", trim(PB%SO%Name), " ", imageRank, ".dat"
+			    if (present(name)) filename = name
                 open (10,file=filename)
-                Write(10,*) TempPB%NPar,TempPB%NParNormal
-                Write(10,*) TempPB%Charge,TempPB%Mass,TempPB%Weight
+                    Write(10,*) TempPB%NPar,TempPB%NParNormal
+                    Write(10,*) TempPB%NParAll, TempPB%ParticleNumberAll
+                    Write(10,*) TempPB%Charge,TempPB%Mass,TempPB%Weight
                 !Dim=Sizeof(TempPB%PO(1))/8_4
-                do i=1,TempPB%NPar
-                     Write(10,FMt="(*(es21.14,1x))")  TempPB%PO(i)
-                End do
+                    do i=1,TempPB%NPar
+                        Write(10,FMt="(*(es21.14,1x))")  TempPB%PO(i)
+                    End do
                 close(10)
                 Write(*,*) 'Saving ', trim(TempPB%SO%Name),' Complete!'  
                 return
             end subroutine  DumpParticleBundle
    
-            subroutine LoadParticleBundle(PB,Status)
+            subroutine LoadParticleBundle(PB,Status,name)
                 implicit none
                 Class(ParticleBundle),intent(inout) :: PB
                 Logical,intent(inout) ::  Status
                 Logical :: alive
-                Character(len=99) :: Filename
-                Integer(4) :: i,NameIndex,NPArMax
-                NameIndex=DefaultNameIndex
-                Write(filename,*) NameIndex,trim(PB%SO%Name),".dat"
+                Character(len=CharLenthMax), intent(in), optional :: name
+                Character(len=CharLenthMax) :: filename
+                Integer(4) :: i,NPArMax
+
+                Write(filename, '(a, a, a, i3, a)') "./restart/", trim(PB%SO%Name), " ", imageRank, ".dat"
+			    if (present(name)) filename = name
+
                 Inquire(file=filename,exist=alive)
                 If(alive) then
                        Open (10,file=filename)
                        Read(10,*) PB%NPar,PB%NParNormal
-                       Read(10,*)  PB%Charge, PB%Mass, PB%Weight
+					    Read(10,*) PB%NParAll, PB%ParticleNumberAll
+					    Read(10,*) PB%Charge, PB%Mass, PB%Weight
                        Write(*,*) 'Loading ', trim(PB%SO%Name), PB%NPar,' Please Wait...' 
-                        NPArMax=Ceiling(2.5*PB%NParNormal)
+                        NPArMax=Ceiling(4.0*PB%NParNormal)
+
                         If(Allocated(PB%PO)) Deallocate(PB%PO)
                         Allocate(PB%PO(NPArMax))
+
                        do i=1,PB%NPar
                              Read(10,*)  PB%PO(i)
                        end do
@@ -255,14 +262,16 @@ Module ModuleParticleBundle
                 return
             end subroutine  LoadParticleBundle
             
-            Subroutine ParticleBundleNormalization(PB,NParNew) 
-              Implicit none
-              Class(ParticleBundle),intent(inout) :: PB
-              Integer(4),intent(in) :: NParNew
-              Type(ParticleOne) :: ParticleTemp
-              Integer(4) :: i,NTemp,Ndiff,Index
-              NTemp=PB%NPar
-              PB%Weight=PB%Weight*dble(NTemp)/dble(NParNew)
+            Subroutine ParticleBundleNormalization(PB,k_NParNew) 
+                Implicit none
+                Class(ParticleBundle),intent(inout) :: PB
+                Real(8),intent(in) :: k_NParNew
+                Type(ParticleOne) :: ParticleTemp
+                Integer(4) :: i,NTemp,Ndiff,Index,NParNew
+              NTemp = PB%NPar
+			  NParNew = int(dble(PB%NPar) * k_NParNew)
+			  PB%NParAll = int(dble(PB%NParAll) * k_NParNew)		! 不是很准确，但是NParAll在后续合并后是正确的，这里只有不影响后续粒子合并即可
+              PB%Weight = PB%Weight  / k_NParNew
               If(NParNew>NTemp) then
                  Ndiff=NParNew-NTemp
                  do  i=1,Ndiff

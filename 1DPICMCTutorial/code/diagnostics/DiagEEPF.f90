@@ -9,21 +9,27 @@ Module DiagnosticsEEPF
                         Real(8) :: EnergyInterval,Mass
                         Real(8) :: EDF(NeMax),EDFNormalized(NeMax)
                     EndType ParticleEDF
+                    Type(ParticleEDF), save, allocatable ::  TempPEDFGlobal [:]
+                    Type(ParticleEDF), save, allocatable ::  TempPEDFLocal [:]
     contains
+    subroutine DiagParticleEDFInitilalization()
+        allocate (TempPEDFGlobal [*])
+        allocate (TempPEDFLocal [*])
+    end subroutine DiagParticleEDFInitilalization
              subroutine DiagParticleEDFOne(GD,PB,Mode)
             Implicit none
             Class(*),intent(inout)  :: GD
             Type(ParticleBundle),intent(in) :: PB
             Integer(4),intent(in) ::  Mode
-            Type(ParticleEDF) :: PEDF
-            Integer(4) :: Shift
+            ! Type(ParticleEDF) :: PEDF
+            Integer(4) :: k,Shift
 
             If (PB%SO%SpecyIndex==0) Then
-                PEDF%EnergyInterval=0.1d0
+                TempPEDFLocal%EnergyInterval=0.1d0
             Else
-                PEDF%EnergyInterval=1.d0
+                TempPEDFLocal%EnergyInterval=1.d0
             End If
-            PEDF%Mass=PB%Mass
+            TempPEDFLocal%Mass=PB%Mass
 
             Select Type (GD)
                   Type is (Grid1D(*,*))
@@ -31,12 +37,21 @@ Module DiagnosticsEEPF
                         Case(-1)
                             !Call GridInitialization(GD,PB%Period,PEDF%EnergyInterval,PB%Dt)
                         case(0)
-                            
-                            PEDF%Ne=GD%Nx
                             Shift=1
-                            Call WeightingParticleEDF(PB,PEDF)
-                            Call GD%Update(GD%Nx,PEDF%EDF,Shift)
-                            Call GD%Update(GD%Nx,PEDF%EDFNormalized,Shift)
+                            TempPEDFLocal%Ne=GD%Nx
+                            TempPEDFGlobal%EDF=0.d0
+                            TempPEDFGlobal%EDFNormalized=0.d0
+                            Call WeightingParticleEDF(PB,TempPEDFLocal)
+                            sync all
+                            do k=1,imageSize
+                                TempPEDFGlobal%EDF=TempPEDFGlobal%EDF+TempPEDFLocal[k]%EDF
+                                TempPEDFGlobal%EDFNormalized=TempPEDFGlobal%EDFNormalized+TempPEDFLocal[k]%EDFNormalized
+                            end do
+                            sync all
+                            TempPEDFGlobal%EDF=TempPEDFGlobal%EDF/dble(imageSize)
+                            TempPEDFGlobal%EDFNormalized=TempPEDFGlobal%EDFNormalized/dble(imageSize)
+                            Call GD%Update(GD%Nx,TempPEDFGlobal%EDF,Shift)
+                            Call GD%Update(GD%Nx,TempPEDFGlobal%EDFNormalized,Shift)
                             GD%Timer=GD%Timer+1
                          Case(1) 
                                  Call GD%Rescale
@@ -53,9 +68,20 @@ Module DiagnosticsEEPF
                                 !Call GridInitialization(GD,PB%Period,PEDF%EnergyInterval,PB%Dt)
                             case(0)
                                 Shift=1
-                                Call WeightingParticleEDF(PB,PEDF)
-                                Call GD%Update(GD%Nx,PEDF%EDF,Shift)
-                                Call GD%Update(GD%Nx,PEDF%EDFNormalized,Shift)
+                                TempPEDFLocal%Ne=GD%Nx
+                                TempPEDFGlobal%EDF=0.d0
+                                TempPEDFGlobal%EDFNormalized=0.d0
+                                Call WeightingParticleEDF(PB,TempPEDFLocal)
+                                sync all
+                                do k=1,imageSize
+                                    TempPEDFGlobal%EDF=TempPEDFGlobal%EDF+TempPEDFLocal[k]%EDF
+                                    TempPEDFGlobal%EDFNormalized=TempPEDFGlobal%EDFNormalized+TempPEDFLocal[k]%EDFNormalized
+                                end do
+                                sync all
+                                TempPEDFGlobal%EDF=TempPEDFGlobal%EDF/dble(imageSize)
+                                TempPEDFGlobal%EDFNormalized=TempPEDFGlobal%EDFNormalized/dble(imageSize)
+                                Call GD%Update(GD%Nx,TempPEDFGlobal%EDF,Shift)
+                                Call GD%Update(GD%Nx,TempPEDFGlobal%EDFNormalized,Shift)
                                 GD%Timer=GD%Timer+1
                             Case(1) 
                                      Call GD%Rescale

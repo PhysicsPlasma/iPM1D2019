@@ -49,19 +49,22 @@ Module ModuleGrid
     
     
           
-     subroutine DumpGrid1D(GD,Mode)
+     subroutine DumpGrid1D(GD,Mode,rank)
         Implicit none
         Class(Grid1D(*,*)),intent(inout)  :: GD
         Integer(4),intent(in) :: Mode
+        Integer(4),intent(in), optional :: rank
         Character(len=99) :: Filename
-        Integer(4) :: i,j,k,NameIndex,Ns
+        Integer(4) :: i,j,k,NameIndex,Ns,dumpRank=1
         Integer(4),save :: NameTimer=1
+        if (present(rank)) dumpRank = rank
         If (Mode==0) Then
                    NameIndex=DefaultNameIndex
         else
                    NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
                    NameTimer=NameTimer+1
         End If 
+        if (imageRank == dumpRank) then
                 Write(filename,*) "Grid1D",NameIndex,".dat"
                 Write(*,*) "Saving ",Filename," Please wait..."
                 open (10,file=filename)
@@ -71,7 +74,7 @@ Module ModuleGrid
                 end do
                 close(10)
                 Write(*,*) "Save ",Filename,"Complete!"
- 
+        end if
         return
      end subroutine DumpGrid1D
      
@@ -120,19 +123,22 @@ Module ModuleGrid
         return
      end subroutine InitializationGrid2D
      
-    subroutine DumpGrid2D(GD,Mode)
+    subroutine DumpGrid2D(GD,Mode,rank)
         Implicit none
         Class(Grid2D(*,*,*)),intent(inout)  :: GD
         Integer(4),intent(in) :: Mode
+        Integer(4),intent(in), optional :: rank
         Character(len=99) :: Filename
-        Integer(4) :: i,j,k,NameIndex,Ns
+        Integer(4) :: i,j,k,NameIndex,Ns,dumpRank=1
         Integer(4),save :: NameTimer=1
+        if (present(rank)) dumpRank = rank
         If (Mode==0) Then
                    NameIndex=DefaultNameIndex
         else
                    NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
                    NameTimer=NameTimer+1
         End If 
+        if (imageRank == dumpRank) then
                 Write(filename,*) "Grid2D",NameIndex,".dat"
                 Filename=Trim(filename)
                 Write(*,*) "Saving ",Filename," Please wait..."
@@ -145,6 +151,7 @@ Module ModuleGrid
                 end do
                 close(10)
                 Write(*,*) "Save ",Filename,"Complete!"
+        end if
          return
      end subroutine DumpGrid2D
      

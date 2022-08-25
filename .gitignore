@@ -4,3 +4,6 @@
 
 /1DPICMCTutorial/Debug
 /1DPICMCTutorial/Release
+/1DPICMCTutorial/code/base/*.mod
+/build
+/run

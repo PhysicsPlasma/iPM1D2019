@@ -16,6 +16,7 @@ Module Constants
     Real(8)  :: R
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
     Integer(4),Parameter :: CharLenthMax=99_4
+    Integer(4) :: imageRank = 0, imageSize = 0
     End  Module Constants
     
     !!!!test20210925

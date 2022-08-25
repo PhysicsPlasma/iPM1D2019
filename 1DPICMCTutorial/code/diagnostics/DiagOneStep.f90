@@ -5,7 +5,7 @@ Module ModuleDiagOneStep
       Use DiagnosticsMomentum
       Use ModuleOneStepField
       Use ModuleOneStep
-      Use DiagnosticsTestParticle
+      ! Use DiagnosticsTestParticle
       
       !Use DiagnosticsTestParticle
       Implicit none
@@ -32,52 +32,54 @@ Module ModuleDiagOneStep
                  Call G2DDiagParticleCR%Init(CF)
                  Call G1DDiagParticleEDF%Init(CF)
                  Call G2DDiagParticleEDF%Init(CF)
-                 
+                 call DiagMomentumInitilalization(1)
+                 call DiagParticleEDFInitilalization()
+                 call DiagParticleCollisionRateInitilalization()
           return  
       End Subroutine DiagInitilalization
       
-     Subroutine DiagInitilalization2()
-            Implicit none
-            !Class(ControlFlow), intent(in) :: CF
-            !Integer(4),intent(in) ::  Ns
-            !Type(ParticleBundle),intent(in) :: PB(0:Ns)
-            Call DiagParticleTestParticle(ParticleGlobal(0),ParticleBDOneGlobal(0),FieldGlobal,-1)              
-          return  
-      End Subroutine DiagInitilalization2
+    !  Subroutine DiagInitilalization2()
+    !         Implicit none
+    !         !Class(ControlFlow), intent(in) :: CF
+    !         !Integer(4),intent(in) ::  Ns
+    !         !Type(ParticleBundle),intent(in) :: PB(0:Ns)
+    !         Call DiagParticleTestParticle(ParticleGlobal(0),ParticleBDOneGlobal(0),FieldGlobal,-1)              
+    !       return  
+    !   End Subroutine DiagInitilalization2
       
       
       Subroutine  DiagOneStep()
           Implicit none   
-             Call DiagParticleFieldPeriod(G1DDiagParticleField,1,ParticleGlobal,FieldGlobal,0)
-             Call DiagParticleFieldPeriod(G2DDiagParticleField,1,ParticleGlobal,FieldGlobal,0)
-             Call DiagParticleEDFOne(G1DDiagParticleEDF,ParticleGlobal(0),0)
-             Call DiagParticleEDFOne(G2DDiagParticleEDF,ParticleGlobal(0),0)
-             Call DiagParticleCollisionRateOne(G1DDiagParticleCR,ParticleGlobal(0),MCCBundleGlobal(0,1),0)
-             Call DiagParticleCollisionRateOne(G2DDiagParticleCR,ParticleGlobal(0),MCCBundleGlobal(0,1),0)
+             Call DiagParticleFieldPeriod(G1DDiagParticleField,1,ParticleLocal,FieldGlobal,0)
+             Call DiagParticleFieldPeriod(G2DDiagParticleField,1,ParticleLocal,FieldGlobal,0)
+             Call DiagParticleEDFOne(G1DDiagParticleEDF,ParticleLocal(0),0)
+             Call DiagParticleEDFOne(G2DDiagParticleEDF,ParticleLocal(0),0)
+             Call DiagParticleCollisionRateOne(G1DDiagParticleCR,ParticleLocal(0),MCCBundleGlobal(0,1),0)
+             Call DiagParticleCollisionRateOne(G2DDiagParticleCR,ParticleLocal(0),MCCBundleGlobal(0,1),0)
         return  
       End Subroutine DiagOneStep
       
-      Subroutine  DiagOneStep2()
-          Implicit none   
-           Call DiagParticleTestParticle(ParticleGlobal(0),ParticleBDOneGlobal(0),FieldGlobal,0)              
-           return  
-      End Subroutine DiagOneStep2
+      ! Subroutine  DiagOneStep2()
+      !     Implicit none   
+      !      Call DiagParticleTestParticle(ParticleGlobal(0),ParticleBDOneGlobal(0),FieldGlobal,0)              
+      !      return  
+      ! End Subroutine DiagOneStep2
        !
        Subroutine DiagOneStepFinal()
        Implicit none  
-             Call DiagParticleFieldPeriod(G1DDiagParticleField,1,ParticleGlobal,FieldGlobal,1)
-             Call DiagParticleFieldPeriod(G2DDiagParticleField,1,ParticleGlobal,FieldGlobal,1)
-             Call DiagParticleEDFOne(G1DDiagParticleEDF,ParticleGlobal(0),1)
-             Call DiagParticleEDFOne(G2DDiagParticleEDF,ParticleGlobal(0),1)
-             Call DiagParticleCollisionRateOne(G1DDiagParticleCR,ParticleGlobal(0),MCCBundleGlobal(0,1),1)
-             Call DiagParticleCollisionRateOne(G2DDiagParticleCR,ParticleGlobal(0),MCCBundleGlobal(0,1),1)
+             Call DiagParticleFieldPeriod(G1DDiagParticleField,1,ParticleLocal,FieldGlobal,1)
+             Call DiagParticleFieldPeriod(G2DDiagParticleField,1,ParticleLocal,FieldGlobal,1)
+             Call DiagParticleEDFOne(G1DDiagParticleEDF,ParticleLocal(0),1)
+             Call DiagParticleEDFOne(G2DDiagParticleEDF,ParticleLocal(0),1)
+             Call DiagParticleCollisionRateOne(G1DDiagParticleCR,ParticleLocal(0),MCCBundleGlobal(0,1),1)
+             Call DiagParticleCollisionRateOne(G2DDiagParticleCR,ParticleLocal(0),MCCBundleGlobal(0,1),1)
           return  
        End Subroutine DiagOneStepFinal
        
-      Subroutine DiagOneStepFinal2()
-       Implicit none  
-          Call DiagParticleTestParticle(ParticleGlobal(0),ParticleBDOneGlobal(0),FieldGlobal,1)              
-          return  
-        End Subroutine DiagOneStepFinal2
+      ! Subroutine DiagOneStepFinal2()
+      !  Implicit none  
+      !     Call DiagParticleTestParticle(ParticleGlobal(0),ParticleBDOneGlobal(0),FieldGlobal,1)              
+      !     return  
+      !   End Subroutine DiagOneStepFinal2
 
   End Module ModuleDiagOneStep

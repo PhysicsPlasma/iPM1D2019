@@ -10,16 +10,21 @@
                         Integer(4) :: NReaction
                         Real(8) :: CollisionRate(NxMax,NReactionMax)
                     EndType ParticleCollisionRate
+    Type(ParticleCollisionRate), save, allocatable ::  TempPCRGlobal [:]
+    Type(ParticleCollisionRate), save, allocatable ::  TempPCRLocal [:]
     contains
-    
+    subroutine DiagParticleCollisionRateInitilalization()
+        allocate (TempPCRGlobal [*])
+        allocate (TempPCRLocal [*])
+    end subroutine DiagParticleCollisionRateInitilalization
     subroutine DiagParticleCollisionRateOne(GD,PB,MCCB,Mode)
             Implicit none
             Class(*),intent(inout)  :: GD
             Type(ParticleBundle),intent(in) :: PB
             Type(MCCBundle),intent(in) ::  MCCB
             Integer(4),intent(in) ::  Mode
-            Type(ParticleCollisionRate) :: PCR
-            Integer(4) :: Shift,i
+            ! Type(ParticleCollisionRate) :: PCR
+            Integer(4) :: Shift,i,k
             Select Type (GD)
                   Type is (Grid1D(*,*))
                      Select Case (Mode)
@@ -27,9 +32,15 @@
                             !Call GD%Init(CF)
                         case(0)
                             Shift=1
-                            Call WeightingParticleCollisionRate(PB,PCR,MCCB)
+                            TempPCRGlobal%CollisionRate=0.d0
+                            Call WeightingParticleCollisionRate(PB,TempPCRLocal,MCCB)
+                            sync all
+                            do k=1,imageSize
+                                TempPCRGlobal%CollisionRate=TempPCRGlobal%CollisionRate+TempPCRLocal[k]%CollisionRate
+                            end do
+                            sync all
                             do i=1,MCCB%NReaction
-                                 Call GD%Update(GD%Nx,PCR%CollisionRate(:,i),Shift)
+                                 Call GD%Update(GD%Nx,TempPCRGlobal%CollisionRate(:,i),Shift)
                             End Do
                             GD%Timer=GD%Timer+1
                          Case(1) 
@@ -46,9 +57,15 @@
                                 !Call GridInitialization(GD,PB%Period,PB%Dx,PB%Dt)
                             case(0)
                                 Shift=1
-                                Call WeightingParticleCollisionRate(PB,PCR,MCCB)
+                                TempPCRGlobal%CollisionRate=0.d0
+                                Call WeightingParticleCollisionRate(PB,TempPCRLocal,MCCB)
+                                sync all
+                                do k=1,imageSize
+                                    TempPCRGlobal%CollisionRate=TempPCRGlobal%CollisionRate+TempPCRLocal[k]%CollisionRate
+                                end do
+                                sync all
                                 do i=1,MCCB%NReaction
-                                      Call GD%Update(GD%Nx,PCR%CollisionRate(:,i),Shift)
+                                    Call GD%Update(GD%Nx,TempPCRGlobal%CollisionRate(:,i),Shift)
                                 End Do
                                 GD%Timer=GD%Timer+1
                             Case(1) 

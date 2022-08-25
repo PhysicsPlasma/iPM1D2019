@@ -6,7 +6,8 @@ Module ModuleOneStepField
      Type(Field) :: FieldGlobal
      Type(FieldSolver) :: FieldSolverGlobal
      Type(FieldBoundary) :: FieldBoundaryGlobal
-     Type(FieldOne),Allocatable :: FieldOneGlobal(:)
+     Type(FieldOne),Allocatable :: FieldOneLocal(:)[:]		! Local
+	Type(FieldOne),Allocatable :: FieldOneGlobal(:)			! Global	FieldOneLocal累积以后的
                   
     contains
          subroutine InitializationField(CF)
@@ -15,7 +16,8 @@ Module ModuleOneStepField
             Logical ::  Status
             Call FieldBoundaryGlobal%Init(CF)
             Call FieldGlobal%Load(Status)
-            Allocate(FieldOneGlobal(0:CF%Ns))
+            Allocate(FieldOneLocal(0:CF%Ns)[*])
+			Allocate(FieldOneGlobal(0:CF%Ns))
          End subroutine InitializationField
          
     

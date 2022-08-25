@@ -30,116 +30,126 @@ Module ModuleField
                     EndType FieldOne
  
     contains
-                subroutine DumpField(FG,Mode)
-                        Implicit none
-                        Class(Field),intent(inout) :: FG
-                        Integer(4) :: Mode
-                        Character(len=99) :: Filename
-                        Integer(4):: i,j,NameIndex
-                        Integer(4),save :: NameTimer=1
-                        If (Mode==0) Then
-                                   NameIndex=DefaultNameIndex
-                        else
-                                   NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
-                                   NameTimer=NameTimer+1
-                        End If 
-        
-                        Write(filename,*) NameIndex,"FieldGlobal",".dat"
-                        Write(*,*) "Saving ",filename," Please wait..."
-                        open (10,file=filename)
-                        !Write(10,*)  FG%Nx,FG%Dx,FG%Dt
-                        do i=1,FG%Nx
-                               Write(10,FMt="(*(es21.14,1x))") dble(i-1)*FG%Dx,FG%Ex(i),FG%Phi(i),FG%Rho(i),FG%Chi(i)!,FG%Bx(i),FG%By(i)
-                        end do
-                        close(10)
-                        Write(*,*) "Save ",filename,"Complete!"  
-                        return
-             end subroutine DumpField
-            ! 
-             subroutine LoadField(FG,Status)
-                Implicit none
-                Class(Field),intent(inout) :: FG
-                Logical,intent(inout) ::  Status
-                Character(len=99) :: Filename
-                logical :: alive
-                Integer(4) :: i,j,NameIndex
-                Real(8) :: TempDx
-                NameIndex=DefaultNameIndex
-                Write(filename,*) NameIndex,"FieldGlobal",".dat"
-        
-                Inquire(file=filename,exist=alive)
-                If(alive) then
-                            Write(*,*) "Loading ",filename," Please wait..."
-                            open (10,file=filename)
-                            !Read(10,*)  FG%Nx,FG%Dx,FG%Dt
-                            do i=1,FG%Nx
-                                   Read(10,*) TempDx,FG%Ex(i),FG%Phi(i),FG%Rho(i),FG%Chi(i)!,FG%Bx(i),FG%By(i)
-                            end do
-                            close(10)
-                            Status=.False. 
-                            Write(*,*) "Load ",filename,"Complete!" 
-                 else
-                            Write(*,*) 'Can not find the file for ', filename,' set for zero.'    
-                            FG%Ex=0.d0
-                            FG%Phi=0.d0
-                            FG%Rho=0.d0
-                            FG%Chi=0.d0
-                            Status=.True. 
-                 End if              
-                return
-             end subroutine LoadField
+              subroutine DumpField(FG, name)
+                     Implicit none
 
-             subroutine DumpFieldSolver(FS,Mode)
-                    Implicit none
-                    Class(FieldSolver),intent(inout) :: FS
-                    Integer(4) :: Mode
-                    Character(len=99) :: Filename
-                    Integer(4):: i,j,NameIndex
-                    Integer(4),save :: NameTimer=1
-                    If (Mode==0) Then
-                               NameIndex=DefaultNameIndex
-                    else
-                               NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
-                               NameTimer=NameTimer+1
-                    End If 
-        
-                    Write(filename,*) NameIndex,"FieldSolver",".dat"
-                    Write(*,*) "Saving ",filename," Please wait..."
-                    open (10,file=filename)
+                     Class(Field), intent(inout) :: FG
+                     Character(len=CharLenthMax), intent(in), optional :: name
+                     Character(len=CharLenthMax) :: filename
+                     Integer(4):: i
+                     
+                     if (1 == imageRank) then
+                            Write(filename,*) "./restart/","FieldGlobal",".dat"
+                            if (present(name)) filename = name
+                            Write(*,*) "Saving ",filename," Please wait..."
+                            open (10,file=filename)
+                                   do i=1,FG%Nx
+                                          Write(10,FMt="(*(es21.14,1x))") dble(i-1)*FG%Dx,FG%Ex(i),FG%Phi(i),FG%Rho(i),FG%Chi(i)
+                                   end do
+                            close(10)
+                            Write(*,*) "Save ",filename,"Complete!"
+                     end if
+
+                     return
+              end subroutine DumpField
+            ! 
+              subroutine LoadField(FG,Status,name)
+			Implicit none
+			Class(Field),intent(inout) :: FG
+			Logical,intent(inout) ::  Status
+			Character(len=CharLenthMax), intent(in), optional :: name
+			Character(len=CharLenthMax) :: filename
+			logical :: alive
+			Integer(4) :: i,j
+			Real(8) :: TempDx
+
+			Write(filename,*) "./restart/","FieldGlobal",".dat"
+			if (present(name)) filename = name
+
+			Inquire(file=filename,exist=alive)
+			If(alive) then
+				if (1 == imageRank) then
+					Write(*,*) "Loading ",filename," Please wait..."
+				end if
+
+				open (10,file=filename)
+				do i=1,FG%Nx
+					Read(10,*) TempDx,FG%Ex(i),FG%Phi(i),FG%Rho(i),FG%Chi(i)
+				end do
+
+				close(10)
+				Status=.False.
+				if (1 == imageRank) then
+					Write(*,*) "Load ",filename,"Complete!"
+				end if
+			else
+				if (1 == imageRank) then
+					Write(*,*) 'Can not find the file for ', filename,' set for zero.'
+				end if
+				
+				FG%Ex=0.d0
+				FG%Phi=0.d0
+				FG%Rho=0.d0
+				FG%Chi=0.d0
+				Status=.True. 
+			End if    
+			return
+		end subroutine LoadField
+
+             subroutine DumpFieldSolver(FS,name)
+                     Implicit none
+                     Class(FieldSolver),intent(inout) :: FS
+                     Character(len=CharLenthMax), intent(in), optional :: name
+                     Character(len=CharLenthMax) :: filename
+                     Integer(4):: i
+                     if (1 == imageRank) then
+			       Write(filename,*) "./restart/","FieldSolver",".dat"
+				if (present(name)) filename = name
+                            Write(*,*) "Saving ",filename," Please wait..."
+                            open (10,file=filename)
                     !Write(10,*)  FS%Ns,FS%Dx,FS%Dt
-                    do i=1,FS%Ns
-                           Write(10,FMt="(*(es21.14,1x))") dble(i-1)*FS%Dx,FS%Solve(i),FS%Source(i),FS%CoeA(i),FS%CoeB(i),FS%CoeC(i)!,FG%Bx(i),FG%By(i)
-                    end do
-                    close(10)
+                                   do i=1,FS%Ns
+                                          Write(10,FMt="(*(es21.14,1x))") dble(i-1)*FS%Dx,FS%Solve(i),FS%Source(i),FS%CoeA(i),FS%CoeB(i),FS%CoeC(i)!,FG%Bx(i),FG%By(i)
+                                   end do
+                            close(10)
                     Write(*,*) "Save ",filename,"Complete!"  
+                     end if
                     return
              end subroutine DumpFieldSolver
              
-              subroutine DumpFieldOne(Ns,FO,Mode)
-                    Implicit none
-                    Integer(4),intent(in) :: Ns
-                    Type(FieldOne),intent(inout) :: FO(0:Ns)
-                    Integer(4) :: Mode
-                    Character(len=99) :: Filename
-                    Integer(4):: i,j,NameIndex
-                    Integer(4),save :: NameTimer=1
-                    If (Mode==0) Then
-                               NameIndex=DefaultNameIndex
-                    else
-                               NameIndex=DefaultNameIndexInit+ModeMultiplier*Mode+NameTimer
-                               NameTimer=NameTimer+1
-                    End If 
-        
-                    Write(filename,*) NameIndex,"FieldOne",".dat"
-                    Write(*,*) "Saving ",filename," Please wait..."
-                    open (10,file=filename)
-                    !Write(10,*)  FO%Nx,FO%Dx,FO%Dt
-                    do i=1,FO(0)%Nx
-                           Write(10,FMt="(*(es21.14,1x))") FO(0)%Dx*dble(i-1),(ABS(FO(j)%RhoOne(i)/ElectronCharge),j=0,Ns)
-                    end do
-                    close(10)
-                    Write(*,*) "Save ",filename,"Complete!"  
-                    return
-              end subroutine DumpFieldOne    
+             subroutine DumpFieldOne(Ns,FO,rank,name)
+                     Implicit none
+                     Integer(4),intent(in) :: Ns
+                     Type(FieldOne),intent(inout) :: FO(0:Ns)
+                     Integer(4), intent(in), optional :: rank
+                     Character(len=CharLenthMax), intent(in), optional :: name
+                     Character(len=CharLenthMax) :: filename
+                     Integer(4):: i,j
+
+                     if (present(rank) .and. rank >= 1) then
+                            Write(filename, '(a, a, i3, a)') "./restart/","FieldOne ", rank, ".dat"
+                            if (present(name)) filename = name
+                            Write(*,*) "Saving ",filename," Please wait..."
+                            open (10,file=filename)
+                                   do i=1,FO(0)%Nx
+                                          Write(10,FMt="(*(es21.14,1x))") FO(0)%Dx*dble(i-1),(ABS(FO(j)%RhoOne(i)/ElectronCharge),j=0,Ns)
+                                   end do
+                            close(10)
+                            Write(*,*) "Save ",filename,"Complete!"
+                     else
+                            if (1 == imageRank) then
+                                   Write(filename,*) "./restart/","FieldOne",".dat"
+                                   if (present(name)) filename = name
+                                   Write(*,*) "Saving ",filename," Please wait..."
+                                   open (10,file=filename)
+                                          do i=1,FO(0)%Nx
+                                                 Write(10,FMt="(*(es21.14,1x))") FO(0)%Dx*dble(i-1),(ABS(FO(j)%RhoOne(i)/ElectronCharge),j=0,Ns)
+                                          end do
+                                   close(10)
+                                   Write(*,*) "Save ",filename,"Complete!"
+                            end if
+                     end if
+                     return
+              end subroutine DumpFieldOne     
            
  End Module ModuleField 

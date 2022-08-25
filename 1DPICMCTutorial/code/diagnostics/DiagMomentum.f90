@@ -15,8 +15,14 @@ Module DiagnosticsMomentum
                         Real(8) ::  JxOne(1:NxMax),JyOne(1:NxMax),JzOne(1:NxMax)
                         Real(8) ::  TOne(1:NxMax)
                    EndType ParticleMomentumOne
+    Type(ParticleMomentumOne), save, allocatable ::  TempPMOGlobal(:) [:]
+    Type(ParticleMomentumOne), save, allocatable ::  TempPMOLocal(:) [:]
     contains
-
+    subroutine DiagMomentumInitilalization(NSpecy)
+        Integer(4), intent(in) ::  NSpecy
+        allocate (TempPMOGlobal(0:NSpecy) [*])
+        allocate (TempPMOLocal(0:NSpecy) [*])
+    end subroutine DiagMomentumInitilalization
      Subroutine  DiagParticleFieldPeriod(GD,NSpecy,PB,FG,Mode)
          Implicit none
          Class(*),intent(inout)  :: GD
@@ -25,8 +31,8 @@ Module DiagnosticsMomentum
          Type(Field),intent(in) :: FG
          Integer(4),intent(in) ::  Mode
          !Integer(4),parameter :: NSpecyMax=2_4 
-         Type(ParticleMomentumOne) ::  TempPMO
-         Integer(4) :: i,j,Shift
+        !  Type(ParticleMomentumOne) ::  TempPMO
+         Integer(4) :: i,j,k,Shift
          Real(8) :: HeatingRate(FG%Nx)
          Select Type (GD)
              Type is (Grid1D(*,*))
@@ -34,13 +40,25 @@ Module DiagnosticsMomentum
 
                     case(0)
                         Shift=1
+                        
                         Do i=0, NSpecy
-                                      Call WeightingParticleMomentum(PB(i),TempPMO)
-                                      Call GD%Update(GD%Nx,TempPMO%RhoOne,Shift)
-                                      Call GD%Update(GD%Nx,TempPMO%JxOne,Shift)
-                                      Call GD%Update(GD%Nx,TempPMO%TOne,Shift)
-                                      HeatingRate=TempPMO%JxOne*FG%Ex
-                                      Call GD%Update(GD%Nx,HeatingRate,Shift)
+                            TempPMOGlobal(i)%RhoOne = 0
+                            TempPMOGlobal(i)%JxOne = 0
+                            TempPMOGlobal(i)%TOne = 0
+                            Call WeightingParticleMomentum(PB(i),TempPMOLocal(i))
+                            sync all
+                            do k = 1, imageSize
+                                TempPMOGlobal(i)%RhoOne = TempPMOGlobal(i)%RhoOne + TempPMOLocal(i) [k]%RhoOne
+                                TempPMOGlobal(i)%JxOne = TempPMOGlobal(i)%JxOne + TempPMOLocal(i) [k]%JxOne
+                                TempPMOGlobal(i)%TOne = TempPMOGlobal(i)%TOne + TempPMOLocal(i) [k]%TOne
+                            end do
+                            sync all
+                            TempPMOGlobal(i)%TOne=TempPMOGlobal(i)%TOne/dble(imageSize)
+                            Call GD%Update(GD%Nx, TempPMOGlobal(i)%RhoOne, Shift)
+                            Call GD%Update(GD%Nx, TempPMOGlobal(i)%JxOne, Shift)
+                            Call GD%Update(GD%Nx, TempPMOGlobal(i)%TOne, Shift)
+                            HeatingRate = TempPMOGlobal(i)%JxOne*FG%Ex
+                            Call GD%Update(GD%Nx, HeatingRate, Shift)
                         End do
                         Call GD%Update(GD%Nx,FG%Ex,Shift)
                         Call GD%Update(GD%Nx,FG%Phi,Shift)
@@ -62,12 +80,23 @@ Module DiagnosticsMomentum
                         case(0)
                             Shift=1
                              Do i=0, NSpecy
-                                          Call WeightingParticleMomentum(PB(i),TempPMO)
-                                          Call GD%Update(GD%Nx,TempPMO%RhoOne,Shift)
-                                          Call GD%Update(GD%Nx,TempPMO%JxOne,Shift)
-                                          Call GD%Update(GD%Nx,TempPMO%TOne,Shift)
-                                          HeatingRate=TempPMO%JxOne*FG%Ex
-                                          Call GD%Update(GD%Nx,HeatingRate,Shift)
+                                TempPMOGlobal(i)%RhoOne = 0
+                                TempPMOGlobal(i)%JxOne = 0
+                                TempPMOGlobal(i)%TOne = 0
+                                Call WeightingParticleMomentum(PB(i),TempPMOLocal(i))
+                                sync all
+                                do k = 1, imageSize
+                                    TempPMOGlobal(i)%RhoOne = TempPMOGlobal(i)%RhoOne + TempPMOLocal(i) [K]%RhoOne
+                                    TempPMOGlobal(i)%JxOne = TempPMOGlobal(i)%JxOne + TempPMOLocal(i) [K]%JxOne
+                                    TempPMOGlobal(i)%TOne = TempPMOGlobal(i)%TOne + TempPMOLocal(i) [K]%TOne
+                                end do
+                                sync all
+                                TempPMOGlobal(i)%TOne=TempPMOGlobal(i)%TOne/dble(imageSize)
+                                Call GD%Update(GD%Nx, TempPMOGlobal(i)%RhoOne, Shift)
+                                Call GD%Update(GD%Nx, TempPMOGlobal(i)%JxOne, Shift)
+                                Call GD%Update(GD%Nx, TempPMOGlobal(i)%TOne, Shift)
+                                HeatingRate = TempPMOGlobal(i)%JxOne*FG%Ex
+                                Call GD%Update(GD%Nx, HeatingRate, Shift)
                             End do
                             Call GD%Update(GD%Nx,FG%Ex,Shift)
                             Call GD%Update(GD%Nx,FG%Phi,Shift)

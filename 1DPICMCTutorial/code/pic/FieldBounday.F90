@@ -19,31 +19,54 @@ Module ModuleFieldBoundary
      EndType FieldBoundary
 
     contains
-     Subroutine InitilalizationFieldBounday(FB,CF)
-               Implicit none
-               Class(FieldBoundary),intent(inout) :: FB
-               Type(ControlFlow),intent(inout) :: CF
-               Real(8) :: Dt
-               Character(len=99) :: Filename
-               Logical :: alive
-               Write(filename,*) "10000","FieldBoundary",".dat"
-               Inquire(file=filename,exist=alive)
-               If(alive) then
-                   Open (10,file=filename)
-                   Read(10,*) FB%Timer,FB%V1,FB%V2,FB%Vdc
-                   Close(10)
-               Else
-                   Write(*,*) 'Can not find the file for ', filename,' the FieldBoundary will be set to Zero.' 
-                   FB%Timer=0
-                   FB%Vdc=0.d0
-                   FB%V1=0.d0
-                   FB%V2=0.d0
-               End If
-               CF%Period=Int(1.d0/FB%Frequency(1)/CF%dt)
-               FB%Dt=CF%dt
-               FB%Period=CF%Period
-               return
-     End Subroutine InitilalizationFieldBounday
+Subroutine InitilalizationFieldBounday(FB,CF,name)
+			Implicit none
+			Class(FieldBoundary),intent(inout) :: FB
+			Type(ControlFlow),intent(inout) :: CF
+			Character(len=CharLenthMax), intent(in), optional :: name
+			Real(8) :: Dt
+			integer(4) :: i
+			Character(len=CharLenthMax) :: Filename
+			Logical :: alive
+
+			Write(filename,*) "./restart/","FieldBoundary",".dat"
+			if (present(name)) filename = name
+
+			Inquire(file=filename,exist=alive)
+			If(alive) then
+				Open (10,file=filename)
+					Read(10,*) FB%FieldBoundaryModel
+					Read(10,*) FB%Timer,FB%Period
+					Read(10,*) FB%V1,FB%V2,FB%Vdc
+					Read(10,*) (FB%Frequency(i),i=1,3)
+					Read(10,*) (FB%Voltage(i),i=1,3)
+					Read(10,*) FB%V1
+					Read(10,*) FB%V2
+					Read(10,*) FB%Vdc
+				Close(10)
+			Else
+				if (1 == imageRank) then
+					Write(*,*) 'Can not find the file for ', filename,' the FieldBoundary will be set to Zero.'
+				end if
+
+				FB%Timer=0
+				FB%Vdc=0.d0
+				FB%V1=0.d0
+				FB%V2=0.d0
+			End If
+
+			CF%Period = Int(1.d0/FB%Frequency(1)/CF%dt)
+			CF%Timer = FB%Timer
+
+			if (1 == imageRank) then
+				write(*,*) "CF%Period=",CF%Period
+			end if
+			
+			FB%Dt = CF%dt
+			FB%Period = CF%Period
+
+			return
+		End Subroutine InitilalizationFieldBounday
      
      Subroutine UpdaterFieldBounday(FB)
             implicit none
@@ -69,16 +92,30 @@ Module ModuleFieldBoundary
     end subroutine  UpdaterFieldBounday
 
      
-     Subroutine FieldBoundayFinalization(FB)
-               Implicit none
-               Type(FieldBoundary),intent(inout) :: FB
-               Character(len=99) :: Filename
-               Write(filename,*) "10000","FieldBoundary",".dat"
-               Open (10,file=filename)
-               Write(10,*) FB%Timer,FB%V1,FB%V2,FB%Vdc
-               Close(10)
-               Write(*,*) "Saving ",filename," Please wait..."
-               return
+     Subroutine FieldBoundayFinalization(FB,name)
+        Implicit none
+        class(FieldBoundary),intent(in) :: FB
+        Character(len=CharLenthMax), intent(in), optional :: name
+        Character(len=CharLenthMax) :: Filename
+        integer(4) :: i
+
+        if (1 == imageRank) then
+            Write(filename,*) "./restart/","FieldBoundary",".dat"
+            if (present(name)) filename = name
+
+            Open (10,file=filename)
+                write(10,*) FB%FieldBoundaryModel
+                write(10,*) FB%Timer,FB%Period
+                write(10,*) FB%V1,FB%V2,FB%Vdc
+                write(10,*) (FB%Frequency(i),i=1,3)
+                write(10,*) (FB%Voltage(i),i=1,3)
+                write(10,*) FB%V1
+                write(10,*) FB%V2
+                write(10,*) FB%Vdc
+            Close(10)
+        end if
+
+        return
      End Subroutine FieldBoundayFinalization
      !
      Subroutine UpdateFieldBounday(FB,Ns,PBDO)
