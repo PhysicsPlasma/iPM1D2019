@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.10.0)
-
+cmake_minimum_required(VERSION 3.12.0)
+set(CMAKE_C_COMPILER icc)
+set(CMAKE_Fortran_COMPILER ifort)
 project(iPM1D2019  LANGUAGES C Fortran)
 set(CMAKE_BUILD_TYPE "Release")
 set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -coarray=shared -coarray-num-images=4")

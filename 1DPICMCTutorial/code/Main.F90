@@ -34,15 +34,19 @@
             Call OneStepRestart()
         end if
         if (1 == imageRank) then
-            call system_clock(time_end)
+            ! call system_clock(time_end)
             open (10,position='append',file='ParticleNumber.dat')
             write (10,*) ParticleLocal%NParAll,ParticleLocal%weight
             close (10)
             Write(*,*) 'Period ',j,ParticleLocal%NParAll
-            Write(*, '(a30, f12.6)')       'CPU Time (s):         ', dble(time_end - time_start) / 1000000.d0
+            ! Write(*, '(a30, f12.6)')       'CPU Time (s):         ', dble(time_end - time_start) / 1000000.d0
         end if
    ENd Do
    sync all
+   if (1 == imageRank) then
+        call system_clock(time_end)
+        write(*, '(a30, f12.6)')       'CPU Time (s):         ', dble(time_end - time_start) / 1000000.d0
+    end if
    !Call CPU_TIME(CPU2)
    !Write(*,*) 'Period ',CPU2-CPU1,ParticleGlobal%NPar
    !Write(*,*) 'Period ', j,' Complete!'  
@@ -54,12 +58,16 @@
              call MergeAndSplit()
          End do
          if (1 == imageRank) then
-            call system_clock(time_end)
+            ! call system_clock(time_end)
             Write(*,*) 'Diag Period ',j,ParticleLocal%NParAll
-            Write(*, '(a30, f12.6)')       'CPU Time (s):         ', dble(time_end - time_start) / 1000000.d0
+            ! Write(*, '(a30, f12.6)')       'CPU Time (s):         ', dble(time_end - time_start) / 1000000.d0
         end if
      ENd Do
      sync all
+     if (1 == imageRank) then
+        call system_clock(time_end)
+        write(*, '(a30, f12.6)')       'CPU Time (s):         ', dble(time_end - time_start) / 1000000.d0
+    end if
      Call DiagOneStepFinal()
    !
 
